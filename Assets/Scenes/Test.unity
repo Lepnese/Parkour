@@ -233,8 +233,6 @@ GameObject:
   - component: {fileID: 547330889}
   - component: {fileID: 547330888}
   - component: {fileID: 547330893}
-  - component: {fileID: 547330895}
-  - component: {fileID: 547330894}
   - component: {fileID: 547330896}
   m_Layer: 0
   m_Name: XR Origin
@@ -336,41 +334,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 44a62afb792fe8442af811e57d57d2ef, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &547330894
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 547330887}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3f907d5ea9608144c82f3971fc2df4cd, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  primaryReference: {fileID: 7393297889388296884, guid: c348712bda248c246b8c49b3db54643f, type: 3}
-  LeftHand: {fileID: 1380589936}
-  RightHand: {fileID: 1105143078}
---- !u!114 &547330895
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 547330887}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0d9a1128713d2d348943ab5055300c2e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  moveReference: {fileID: 6972639530819350904, guid: c348712bda248c246b8c49b3db54643f, type: 3}
-  LeftHand: {fileID: 1380589936}
-  RightHand: {fileID: 1105143078}
-  CenterEyeCamera: {fileID: 1143002078}
-  ForwardDirection: {fileID: 1711860546}
-  MinRunSpeed: 0.1
-  text: {fileID: 623333400}
-  Speed: 5
 --- !u!114 &547330896
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -389,8 +352,8 @@ MonoBehaviour:
   CenterEyeCamera: {fileID: 1143002078}
   ForwardDirection: {fileID: 1711860546}
   MinRunSpeed: 0.8
-  JumpSpeed: 20
-  Speed: 5
+  JumpSpeed: 1
+  Speed: 20
 --- !u!1 &623333398
 GameObject:
   m_ObjectHideFlags: 0
@@ -787,8 +750,8 @@ MonoBehaviour:
   m_System: {fileID: 808705859}
   m_MoveSpeed: 2
   m_EnableStrafe: 1
-  m_UseGravity: 0
-  m_GravityApplicationMode: 0
+  m_UseGravity: 1
+  m_GravityApplicationMode: 1
   m_ForwardSource: {fileID: 0}
   m_LeftHandMoveAction:
     m_UseReference: 1
