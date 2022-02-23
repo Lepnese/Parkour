@@ -3,7 +3,9 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 2
-  tags: []
+  tags:
+  - ClimbPoint
+  - Ground
   layers:
   - Default
   - TransparentFX
@@ -12,11 +14,11 @@ TagManager:
   - Water
   - UI
   - Ground
-  - 
-  - 
-  - 
-  - 
-  - 
+  - Body
+  - Grab
+  - Left Hand Physics
+  - Right Hand Physics
+  - Player
   - 
   - 
   - 
