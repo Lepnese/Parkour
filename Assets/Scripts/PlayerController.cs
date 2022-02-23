@@ -8,6 +8,7 @@ using System.Linq;
 public class PlayerController : MonoBehaviour
 {
     public Text txt;
+    //test
 
     #region Public Fields
     public GameObject _groundChecker;
