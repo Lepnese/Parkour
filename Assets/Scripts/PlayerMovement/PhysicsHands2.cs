@@ -3,21 +3,22 @@ using UnityEngine;
 
 public class PhysicsHands2 : MonoBehaviour
 {
-    [Header("PID")]
+    [Space]
     [SerializeField] private float frequency = 50f;
     [SerializeField] private float damping = 1f;
     [SerializeField] private float rotFrequency = 100f;
     [SerializeField] private float rotDamping = 0.9f;
-    [SerializeField] private XROrigin playerObj;
+    [Space]
     [SerializeField] private Hand targetController;
     [SerializeField] private float physicsRange = 0.1f;
     [SerializeField] private float climbForce = 1000f;
     [SerializeField] private float climbDrag = 500f;
     [SerializeField] private LayerMask interactableLayers;
-
-    private PlayerController2 player;
+    [Space]
+    [SerializeField] private Rigidbody playerRb;
+    [SerializeField] private CapsuleCollider playerCollider;
+    
     private Rigidbody rb;
-    private CapsuleCollider playerCollider;
     private Transform targetTransform;
     private Vector3 position;
     private Vector3 previousPosition;
@@ -26,8 +27,6 @@ public class PhysicsHands2 : MonoBehaviour
 
     private void Awake() {
         rb = GetComponent<Rigidbody>();
-        player = playerObj.GetComponent<PlayerController2>();
-        playerCollider = playerObj.GetComponent<CapsuleCollider>();
     }
 
     private void Start() {
@@ -49,14 +48,9 @@ public class PhysicsHands2 : MonoBehaviour
             TransformRotation();
         }
 
-        if (isClimbing) {
-            playerCollider.enabled = false;
-            Climb();
-        }
-        else {
-            playerCollider.enabled = true;
-            isClimbing = false;
-        }
+        playerCollider.enabled = !isClimbing;
+        if (!isClimbing) return;
+        Climb();
     }
 
     private void Climb() {
@@ -64,11 +58,8 @@ public class PhysicsHands2 : MonoBehaviour
         Vector3 force = displacementFromResting * climbForce;
         float drag = GetDrag();
 
-        player.Climb(force);
-        player.Climb(drag * -player.PlayerRigidbody.velocity * climbDrag);
-
-        // playerRigidbody.AddForce(force, ForceMode.Acceleration);
-        // playerRigidbody.AddForce(drag * -playerRigidbody.velocity * climbDrag, ForceMode.Acceleration);
+        playerRb.AddForce(force, ForceMode.Acceleration);
+        playerRb.AddForce(drag * -playerRb.velocity * climbDrag, ForceMode.Acceleration);
     }
     
     private float GetDrag() {
@@ -97,7 +88,7 @@ public class PhysicsHands2 : MonoBehaviour
         float ksg = kp * g;
         float kdg = (kd + kp * Time.fixedDeltaTime) * g;
         Vector3 force = (targetTransform.position - transform.position) * ksg +
-                        (player.PlayerRigidbody.velocity - rb.velocity) * kdg;
+                        (playerRb.velocity - rb.velocity) * kdg;
         rb.AddForce(force, ForceMode.Acceleration);
     }
 

@@ -35,9 +35,7 @@ public class PlayerController2 : MonoBehaviour
     private bool isGrounded;
     private Transform cameraTransform;
     private Collider col;
-    private float distToGround;
-
-    public Rigidbody PlayerRigidbody { get; private set; }
+    private Rigidbody rb;
     
     private float AverageHandSpeed {
         get => velocityArray.Average();
@@ -48,19 +46,17 @@ public class PlayerController2 : MonoBehaviour
     }
 
     private bool IsGrounded {
-        get => Physics.Raycast(transform.position, Vector3.down, distToGround + 0.1f);
-        // get => Physics.Raycast(groundChecker.transform.position, transform.TransformDirection(Vector3.down), 0.05f);
+        get => Physics.Raycast(groundChecker.transform.position, Vector3.down, groundChecker.transform.position.y + 0.1f);
     }
 
     private void Awake() {
         col = GetComponent<Collider>();
-        PlayerRigidbody = GetComponent<Rigidbody>();
+        rb = GetComponent<Rigidbody>();
         leftController = leftHandObj.GetComponent<Hand>();
         rightController = rightHandObj.GetComponent<Hand>();
     }
 
     private void Start() {
-        distToGround = col.bounds.extents.y;
         velocityArray = new float[60];
         speedArray = new Vector3[30];
         cameraTransform = centerEyeCamera.transform;
@@ -92,19 +88,15 @@ public class PlayerController2 : MonoBehaviour
 
     private void ManageRun() {
         if (!IsJoystickMoving()) return;
-        PlayerRigidbody.velocity = new Vector3(forwardDirection.x * speed * AverageHandSpeed,
-            PlayerRigidbody.velocity.y, forwardDirection.z * speed * AverageHandSpeed);
-        // PlayerRigidbody.AddForce(forwardDirection * speed * AverageHandSpeed, ForceMode.Acceleration);
-        // PlayerRigidbody.AddForce(forwardDirection * speed * AverageHandSpeed * Time.deltaTime);
+        rb.velocity = new Vector3(forwardDirection.x * speed * AverageHandSpeed,
+            rb.velocity.y, forwardDirection.z * speed * AverageHandSpeed);
+        // rb.AddForce(forwardDirection * speed * AverageHandSpeed, ForceMode.Acceleration);
+        // rb.AddForce(forwardDirection * speed * AverageHandSpeed * Time.deltaTime);
     }
 
     private void ManageJump() {
         if (!CanJump()) return;
-        PlayerRigidbody.AddForce(jumpHeight * Vector3.up, ForceMode.Impulse);
-    }
-    
-    public void Climb(Vector3 force) {
-        PlayerRigidbody.AddForce(force, ForceMode.Acceleration);
+        rb.AddForce(jumpHeight * Vector3.up, ForceMode.Impulse);
     }
 
     // Returns the average velocity (from SpeedArray) of the player

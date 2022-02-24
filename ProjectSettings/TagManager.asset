@@ -16,8 +16,8 @@ TagManager:
   - Ground
   - Body
   - Grab
-  - Left Hand Physics
-  - Right Hand Physics
+  - Physics Hands
+  - 
   - Player
   - 
   - 

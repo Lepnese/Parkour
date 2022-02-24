@@ -16,17 +16,18 @@ public class Timer : MonoBehaviour
 
     void Start()
     {
-        GameManager.GameStart += StartTimer;
+        GameManager.Instance.GameStart += StartTimer;
     }
 
     private void StartTimer() {
         timerStarted = true;
+        startTime = Time.time;
     }
     
     void Update() {
         if (!timerStarted) return;
-        
-        float t = Time.time - GameManager.startTime;
+
+        float t = Time.time - startTime;
         int minutes = Mathf.FloorToInt(t / 60F);
         int seconds = Mathf.FloorToInt(t - minutes * 60);
         int millilseconds = Mathf.FloorToInt(t * 100) % 100;
