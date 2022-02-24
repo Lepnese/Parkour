@@ -14,8 +14,7 @@ public class Timer : MonoBehaviour
         timerText = GetComponent<TextMeshProUGUI>();
     }
 
-    void Start()
-    {
+    private void Start() {
         GameManager.Instance.GameStart += StartTimer;
     }
 
@@ -24,7 +23,7 @@ public class Timer : MonoBehaviour
         startTime = Time.time;
     }
     
-    void Update() {
+    private void Update() {
         if (!timerStarted) return;
 
         float t = Time.time - startTime;
