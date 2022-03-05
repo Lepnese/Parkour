@@ -55,6 +55,7 @@ public class Grappling : MonoBehaviour {
     private void StartGrapple() {
         Vector3 origin = grappleHand.transform.position;
         Vector3 direction = grappleHand.transform.TransformDirection(Vector3.forward);
+        
         if (Physics.SphereCast(origin, sphereCastRadius, direction, out RaycastHit hit, maxDistance, whatIsGrappable)) {
             grapplePoint = hit.point;
             joint = player.gameObject.AddComponent<SpringJoint>();
