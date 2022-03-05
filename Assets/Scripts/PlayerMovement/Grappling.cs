@@ -1,11 +1,20 @@
+using UnityEditor.Rendering;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class Grappling : MonoBehaviour {
 
-    [SerializeField] private Hand hand;
-    [SerializeField] private LayerMask whatIsGrappleable;
-    [SerializeField] private Transform grappleSpawnPoint, playerCamera, player;
+    [SerializeField] private PhysicsHands2 leftHandPhysics;
+    [SerializeField] private PhysicsHands2 rightHandPhysics;
+    [SerializeField] private LayerMask whatIsGrappable;
+    [SerializeField] private Transform player;
+    [SerializeField] private float sphereCastRadius = 1f;
+
+    private PhysicsHands2 grappleHand;
+    private Hand leftHand;
+    private Hand rightHand;
     
+    private Transform spawnPoint;
     private LineRenderer lr;
     private Vector3 grapplePoint;
     private float maxDistance = 100f;
@@ -13,28 +22,40 @@ public class Grappling : MonoBehaviour {
     private bool pressing;
 
     private void Awake() {
-        lr = GetComponent<LineRenderer>();
+        leftHand = leftHandPhysics.targetController;
+        rightHand = rightHandPhysics.targetController;
     }
 
     private void Update() {
-        bool grappleActivated = hand.TriggerValue > 0.1f && hand.GripValue > 0.1f;
-        if (grappleActivated) {
-            pressing = true;
+        Debug.DrawLine(leftHand.transform.position, leftHand.transform.TransformDirection(Vector3.forward) * 100f);
+
+        grappleHand = GetGrappleHand();
+        if (grappleHand && !joint) {
+            lr = grappleHand.GetComponentInChildren<LineRenderer>();
+            spawnPoint = grappleHand.transform.Find("Grapple Spawn Point");
             StartGrapple();
         }
-        else if (pressing) {
-            pressing = false;
+        else if (!grappleHand && joint) {
             StopGrapple();
         }
     }
 
+    private PhysicsHands2 GetGrappleHand() {
+        if (leftHand.TriggerValue > 0.1f && leftHand.GripValue > 0.1f)
+            return leftHandPhysics;
+        if (rightHand.TriggerValue > 0.1f && rightHand.GripValue > 0.1f)
+            return rightHandPhysics;
+        return null;
+    }
+    
     private void LateUpdate() {
         DrawRope();
     }
 
     private void StartGrapple() {
-        RaycastHit hit;
-        if (Physics.Raycast(playerCamera.position, playerCamera.forward, out hit, maxDistance, whatIsGrappleable)) {
+        Vector3 origin = grappleHand.transform.position;
+        Vector3 direction = grappleHand.transform.TransformDirection(Vector3.forward);
+        if (Physics.SphereCast(origin, sphereCastRadius, direction, out RaycastHit hit, maxDistance, whatIsGrappable)) {
             grapplePoint = hit.point;
             joint = player.gameObject.AddComponent<SpringJoint>();
             joint.autoConfigureConnectedAnchor = false;
@@ -42,7 +63,7 @@ public class Grappling : MonoBehaviour {
 
             float distanceFromPoint = Vector3.Distance(player.position, grapplePoint);
 
-            //The distance grapple will try to keep from grapple point. 
+            //The distance grapple will try to keep from grapple point.
             joint.maxDistance = distanceFromPoint * 0.8f;
             joint.minDistance = distanceFromPoint * 0.25f;
 
@@ -52,7 +73,7 @@ public class Grappling : MonoBehaviour {
             joint.massScale = 4.5f;
 
             lr.positionCount = 2;
-            currentGrapplePosition = grappleSpawnPoint.position;
+            currentGrapplePosition = spawnPoint.position;
         }
     }
     
@@ -68,15 +89,7 @@ public class Grappling : MonoBehaviour {
 
         currentGrapplePosition = Vector3.Lerp(currentGrapplePosition, grapplePoint, Time.deltaTime * 8f);
         
-        lr.SetPosition(0, grappleSpawnPoint.position);
+        lr.SetPosition(0, spawnPoint.position);
         lr.SetPosition(1, currentGrapplePosition);
-    }
-
-    public bool IsGrappling() {
-        return joint != null;
-    }
-
-    public Vector3 GetGrapplePoint() {
-        return grapplePoint;
     }
 }

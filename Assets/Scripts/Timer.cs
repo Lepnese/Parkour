@@ -14,10 +14,6 @@ public class Timer : MonoBehaviour
         timerText = GetComponent<TextMeshProUGUI>();
     }
 
-    private void Start() {
-        GameManager.Instance.GameStart += StartTimer;
-    }
-
     private void StartTimer() {
         timerStarted = true;
         startTime = Time.time;

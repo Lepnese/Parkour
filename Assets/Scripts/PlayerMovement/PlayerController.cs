@@ -25,7 +25,6 @@ public class PlayerController : MonoBehaviour
     private Hand ClimbingHand { get; set; }
     
     private int frameCounter;
-    private float playerMass = 3f;
     private const float GravityValue = 0f;
     private bool lastFrameHandsAboveJumpLimit = true;
     private bool isClimbing;

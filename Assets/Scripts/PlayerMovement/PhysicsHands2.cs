@@ -1,5 +1,7 @@
-﻿using Unity.XR.CoreUtils;
+﻿using System;
+using Unity.XR.CoreUtils;
 using UnityEngine;
+using UnityEngine.XR.Interaction.Toolkit;
 
 public class PhysicsHands2 : MonoBehaviour
 {
@@ -9,7 +11,7 @@ public class PhysicsHands2 : MonoBehaviour
     [SerializeField] private float rotFrequency = 100f;
     [SerializeField] private float rotDamping = 0.9f;
     [Space]
-    [SerializeField] private Hand targetController;
+    public Hand targetController;
     [SerializeField] private float physicsRange = 0.1f;
     [SerializeField] private float climbForce = 1000f;
     [SerializeField] private float climbDrag = 500f;
@@ -17,13 +19,14 @@ public class PhysicsHands2 : MonoBehaviour
     [Space]
     [SerializeField] private Rigidbody playerRb;
     [SerializeField] private CapsuleCollider playerCollider;
+    [SerializeField] private ContinuousMoveProviderBase moveProvider;
     
     private Rigidbody rb;
     private Transform targetTransform;
     private Vector3 position;
     private Vector3 previousPosition;
     private bool isCloseToObject;
-    private bool isClimbing;
+    private bool isColliding;
 
     private void Awake() {
         rb = GetComponent<Rigidbody>();
@@ -37,7 +40,7 @@ public class PhysicsHands2 : MonoBehaviour
         previousPosition = transform.position;
     }
 
-    private void Update() {
+    private void LateUpdate() {
         isCloseToObject = Physics.CheckSphere(transform.position, physicsRange, interactableLayers);
         if (isCloseToObject) {
             PIDMovement();
@@ -47,21 +50,23 @@ public class PhysicsHands2 : MonoBehaviour
             TransformMovement();
             TransformRotation();
         }
-
-        playerCollider.enabled = !isClimbing;
-        if (!isClimbing) return;
-        Climb();
+        // playerCollider.enabled = !isClimbing;
+        if (isCloseToObject || isColliding)
+            Climb();
     }
 
     private void Climb() {
         Vector3 displacementFromResting = transform.position - targetTransform.position;
         Vector3 force = displacementFromResting * climbForce;
         float drag = GetDrag();
+        
+        // enable/disable joystick movement if player is climbing
+        moveProvider.enabled = displacementFromResting.magnitude < 0.1f;
 
         playerRb.AddForce(force, ForceMode.Acceleration);
         playerRb.AddForce(drag * -playerRb.velocity * climbDrag, ForceMode.Acceleration);
     }
-    
+
     private float GetDrag() {
         Vector3 handVelocity = (targetTransform.localPosition - previousPosition) / Time.fixedDeltaTime;
         float drag = 1 / handVelocity.magnitude + 0.01f;
@@ -114,10 +119,10 @@ public class PhysicsHands2 : MonoBehaviour
     }
 
     private void OnCollisionEnter(Collision collision) {
-        isClimbing = true;
+        isColliding = true;
     }
 
     private void OnCollisionExit(Collision other) {
-        isClimbing = false;
+        isColliding = false;
     }
 }
