@@ -17,7 +17,6 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float jumpHeight = 2f;
     [SerializeField] private LayerMask ground;
     [SerializeField] private float a = 0.25f;
-    [SerializeField] private float climbForce = 200f;
 
     [HideInInspector]
     public CharacterController controller;

@@ -5,28 +5,30 @@ using UnityEngine.XR.Interaction.Toolkit;
 
 public class PhysicsHands2 : MonoBehaviour
 {
-    [Space]
+    [Header("Climbing Events")] 
+    [SerializeField] private VoidEvent onClimb;
+    [SerializeField] private PhysicsHandsEvent onClimbStart;
+    [SerializeField] private PhysicsHandsEvent onClimbEnd;
+    [Header("PID Movement Values")]
     [SerializeField] private float frequency = 50f;
     [SerializeField] private float damping = 1f;
     [SerializeField] private float rotFrequency = 100f;
     [SerializeField] private float rotDamping = 0.9f;
-    [Space]
+    [Header("Rigidbody Movement Values")]
     public Hand targetController;
     [SerializeField] private float physicsRange = 0.1f;
     [SerializeField] private float climbForce = 1000f;
     [SerializeField] private float climbDrag = 500f;
     [SerializeField] private LayerMask interactableLayers;
-    [Space]
+    [Header("Player References")]
     [SerializeField] private Rigidbody playerRb;
     [SerializeField] private CapsuleCollider playerCollider;
     [SerializeField] private ContinuousMoveProviderBase moveProvider;
     
     private Rigidbody rb;
     private Transform targetTransform;
-    private Vector3 position;
     private Vector3 previousPosition;
     private bool isCloseToObject;
-    private bool isColliding;
 
     private void Awake() {
         rb = GetComponent<Rigidbody>();
@@ -40,29 +42,43 @@ public class PhysicsHands2 : MonoBehaviour
         previousPosition = transform.position;
     }
 
-    private void LateUpdate() {
+    private void Update() {
         isCloseToObject = Physics.CheckSphere(transform.position, physicsRange, interactableLayers);
-        if (isCloseToObject) {
+        if (isCloseToObject)
+            Climb();
+        
+        
+        if (isCloseToObject && IsHoldingGripButton()) {
+            onClimbStart.Raise(this);
+            rb.constraints = RigidbodyConstraints.FreezeAll;
+            Climb();
+            
+            // Controller doesn't move/rotate while grip button is held down
+        }
+        else if (isCloseToObject && !IsHoldingGripButton()) {
+            onClimbEnd.Raise(this);
+            rb.constraints = RigidbodyConstraints.None;
+            
+            // Controller moves using PID (rigidbody motion)
             PIDMovement();
             PIDRotation();
         }
         else {
+            // Controller moves using transform (no rigidbody motion)
             TransformMovement();
             TransformRotation();
         }
-        // playerCollider.enabled = !isClimbing;
-        if (isCloseToObject || isColliding)
-            Climb();
     }
 
     private void Climb() {
         Vector3 displacementFromResting = transform.position - targetTransform.position;
+        if (displacementFromResting.magnitude < 0.05f) return;
+        
         Vector3 force = displacementFromResting * climbForce;
         float drag = GetDrag();
-        
-        // enable/disable joystick movement if player is climbing
-        moveProvider.enabled = displacementFromResting.magnitude < 0.1f;
 
+        onClimb.Raise();
+        
         playerRb.AddForce(force, ForceMode.Acceleration);
         playerRb.AddForce(drag * -playerRb.velocity * climbDrag, ForceMode.Acceleration);
     }
@@ -118,11 +134,5 @@ public class PhysicsHands2 : MonoBehaviour
         rb.AddTorque(torque, ForceMode.Acceleration);
     }
 
-    private void OnCollisionEnter(Collision collision) {
-        isColliding = true;
-    }
-
-    private void OnCollisionExit(Collision other) {
-        isColliding = false;
-    }
+    private bool IsHoldingGripButton() => targetController.GripValue > 0.1f;
 }

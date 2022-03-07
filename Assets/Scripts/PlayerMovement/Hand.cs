@@ -9,8 +9,6 @@ public class Hand : MonoBehaviour
     [SerializeField] private InputActionReference velocityReference = null;
     [SerializeField] private InputActionReference gripReference = null;
     [SerializeField] private InputActionReference triggerReference = null;
-    [SerializeField] private InputActionReference triggerPressReference = null;
-    [SerializeField] private InputActionReference gripPressReference = null;
 
     private bool triggerActive;
     

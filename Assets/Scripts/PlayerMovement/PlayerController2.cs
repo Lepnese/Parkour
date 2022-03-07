@@ -1,25 +1,29 @@
-using System;
 using UnityEngine;
 using System.Linq;
-using System.Net.NetworkInformation;
-using UnityEngine.Animations.Rigging;
+using TMPro;
 using UnityEngine.XR.Interaction.Toolkit;
 
 public class PlayerController2 : MonoBehaviour
 {
-    [SerializeField] private GameObject groundChecker;
+    [Header("Player Objects")]
     [SerializeField] private GameObject leftHandObj;
     [SerializeField] private GameObject rightHandObj;
     [SerializeField] private GameObject centerEyeCamera;
-    [SerializeField] private float speed = 2f;
-    [SerializeField] private float jumpHeight = 2f;
-    [SerializeField] private LayerMask ground;
     [SerializeField] private float a = 0.25f;
     [SerializeField] private ActionBasedContinuousMoveProvider move;
 
+    [Header("Movement")]
+    [SerializeField] private float sprintSpeed = 2f;
+    [SerializeField] private float sprintMultiplier = 10f;
+    [SerializeField] private float airMultiplier = 0.4f;
+    [SerializeField] private float jumpForce = 5f;
+
+    [Header("Drag")] 
+    [SerializeField] private float groundDrag = 6f;
+    [SerializeField] private float airDrag = 2f;
+
     private int frameCounter;
     private bool lastFrameHandsAboveJumpLimit = true;
-    private bool isClimbing;
 
     private float[] velocityArray;
     private Vector3[] speedArray;
@@ -32,10 +36,13 @@ public class PlayerController2 : MonoBehaviour
     private Vector3 forwardDirection;
     private Vector3 averagePlayerSpeed;
 
-    private bool isGrounded;
+    private CapsuleCollider col;
     private Transform cameraTransform;
-    private Collider col;
     private Rigidbody rb;
+    
+    public bool IsGrounded => Physics.Raycast(
+        new Vector2(transform.position.x, transform.position.y + col.height),
+        Vector3.down, col.height + 0.1f, ~gameObject.layer);
     
     private float AverageHandSpeed {
         get => velocityArray.Average();
@@ -45,12 +52,8 @@ public class PlayerController2 : MonoBehaviour
         get => leftHandObj.transform.position.y >  cameraTransform.position.y - a && rightHandObj.transform.position.y >  cameraTransform.position.y - a;
     }
 
-    private bool IsGrounded {
-        get => Physics.Raycast(groundChecker.transform.position, Vector3.down, groundChecker.transform.position.y + 0.1f);
-    }
-
     private void Awake() {
-        col = GetComponent<Collider>();
+        col = GetComponent<CapsuleCollider>();
         rb = GetComponent<Rigidbody>();
         leftController = leftHandObj.GetComponent<Hand>();
         rightController = rightHandObj.GetComponent<Hand>();
@@ -66,16 +69,22 @@ public class PlayerController2 : MonoBehaviour
     private void Update() {
         if (Time.timeSinceLevelLoad < 1f) return;
         frameCounter++;
-
+        
         averagePlayerSpeed = GetAveragePlayerSpeed();
         forwardDirection = cameraTransform.TransformDirection(Vector3.forward);
         
         TrackHandSpeed();
         TrackPlayerSpeed();
         
-        //if (!isGrounded) return;
+        ControlDrag();
+        
+        if (IsGrounded && JumpAction())
+            Jump();
+    }
+
+    private void FixedUpdate() {
+        if (!IsJoystickMoving()) return;
         ManageRun();
-        ManageJump();
     }
 
     private void LateUpdate() {
@@ -86,25 +95,29 @@ public class PlayerController2 : MonoBehaviour
     private void TrackPlayerSpeed() => speedArray[frameCounter % speedArray.Length] = (transform.position - lastFramePosition) / Time.deltaTime;
     private void TrackHandSpeed() => velocityArray[frameCounter % velocityArray.Length] = (leftController.Velocity.magnitude + rightController.Velocity.magnitude) / 2;
 
+    private void ControlDrag() {
+        rb.drag = IsGrounded ? groundDrag : airDrag;
+    }
+    
     private void ManageRun() {
-        if (!IsJoystickMoving()) return;
-        rb.velocity = new Vector3(forwardDirection.x * speed * AverageHandSpeed,
-            rb.velocity.y, forwardDirection.z * speed * AverageHandSpeed);
-        // rb.AddForce(forwardDirection * speed * AverageHandSpeed, ForceMode.Acceleration);
-        // rb.AddForce(forwardDirection * speed * AverageHandSpeed * Time.deltaTime);
+        if (IsGrounded) {
+            rb.AddForce(forwardDirection.normalized * sprintSpeed * sprintMultiplier * AverageHandSpeed, ForceMode.Acceleration);
+        }
+        else {
+            rb.AddForce(forwardDirection.normalized * sprintSpeed * sprintMultiplier * airMultiplier * AverageHandSpeed, ForceMode.Acceleration);
+        }
     }
 
-    private void ManageJump() {
-        if (!CanJump()) return;
-        rb.AddForce(jumpHeight * Vector3.up, ForceMode.Impulse);
+    private void Jump() {
+        rb.AddForce(jumpForce * Vector3.up, ForceMode.Impulse);
     }
 
     // Returns the average velocity (from SpeedArray) of the player
     private Vector3 GetAveragePlayerSpeed() => speedArray.Aggregate(Vector3.zero, (acc, v) => acc + v) / speedArray.Length;
 
     // Checks if player has a speed greater than 1 (joystick movement);
-    private bool IsJoystickMoving() => move.leftHandMoveAction.action.ReadValue<Vector2>() != Vector2.zero && AverageHandSpeed > 3f;
+    private bool IsJoystickMoving() => move.leftHandMoveAction.action.ReadValue<Vector2>() != Vector2.zero;
 
     // Checks if player does the jump action (raise both hands above head with speed)
-    private bool CanJump() => HandsAboveJumpLimit && lastFrameHandsAboveJumpLimit && leftController.Velocity.magnitude > 1f && rightController.Velocity.magnitude > 1f;
+    private bool JumpAction() => HandsAboveJumpLimit && lastFrameHandsAboveJumpLimit && leftController.Velocity.magnitude > 1f && rightController.Velocity.magnitude > 1f;
 }
