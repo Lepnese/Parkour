@@ -24,6 +24,7 @@ public class PlayerController2 : MonoBehaviour
 
     private int frameCounter;
     private bool lastFrameHandsAboveJumpLimit = true;
+    private bool isGrounded;
 
     private float[] velocityArray;
     private Vector3[] speedArray;
@@ -39,10 +40,8 @@ public class PlayerController2 : MonoBehaviour
     private CapsuleCollider col;
     private Transform cameraTransform;
     private Rigidbody rb;
-    
-    public bool IsGrounded => Physics.Raycast(
-        new Vector2(transform.position.x, transform.position.y + col.height),
-        Vector3.down, col.height + 0.1f, ~gameObject.layer);
+
+    public bool IsGrounded => isGrounded;
     
     private float AverageHandSpeed {
         get => velocityArray.Average();
@@ -67,8 +66,12 @@ public class PlayerController2 : MonoBehaviour
     }
 
     private void Update() {
-        if (Time.timeSinceLevelLoad < 1f) return;
+        // if (Time.timeSinceLevelLoad < 1f) return;
         frameCounter++;
+
+        isGrounded = Physics.Raycast(
+            new Vector2(transform.position.x, transform.position.y + col.height),
+            Vector3.down, col.height + 0.1f, ~gameObject.layer);
         
         averagePlayerSpeed = GetAveragePlayerSpeed();
         forwardDirection = cameraTransform.TransformDirection(Vector3.forward);

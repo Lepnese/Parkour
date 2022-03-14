@@ -1,6 +1,4 @@
-using UnityEditor.Rendering;
 using UnityEngine;
-using UnityEngine.InputSystem;
 
 public class Grappling : MonoBehaviour {
 
@@ -16,9 +14,12 @@ public class Grappling : MonoBehaviour {
     
     private Transform spawnPoint;
     private LineRenderer lr;
+
     private Vector3 grapplePoint;
-    private float maxDistance = 100f;
+    private Vector3 currentGrapplePosition;
+
     private SpringJoint joint;
+    private float maxDistance = 100f;
     private bool pressing;
 
     private void Awake() {
@@ -82,8 +83,6 @@ public class Grappling : MonoBehaviour {
         lr.positionCount = 0;
         Destroy(joint);
     }
-
-    private Vector3 currentGrapplePosition;
     
     private void DrawRope() {
         if (!joint) return;

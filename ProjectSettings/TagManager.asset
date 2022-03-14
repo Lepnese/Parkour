@@ -4,8 +4,10 @@
 TagManager:
   serializedVersion: 2
   tags:
-  - ClimbPoint
   - Ground
+  - ClimbArea
+  - Climbable
+  - Default Climbable
   layers:
   - Default
   - TransparentFX
@@ -17,7 +19,7 @@ TagManager:
   - Body
   - Grab
   - Physics Hands
-  - 
+  - ClimbPoint
   - Player
   - Grappable
   - 
