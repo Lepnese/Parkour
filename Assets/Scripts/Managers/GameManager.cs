@@ -1,17 +1,18 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEditor.Rendering;
+﻿using System.Collections;
 using UnityEngine;
-using UnityEngine.InputSystem;
-
 public class GameManager : MonoBehaviour
 {
-    [SerializeField] private VoidEvent activate;
-    
+    [SerializeField] private IntEvent timerEvent;
+
     private IEnumerator Start() {
-        while (Time.timeSinceLevelLoad < 2.5f)
+        while (Time.timeSinceLevelLoad < 5f)
             yield return null;
-        activate.Raise();
+        
+        timerEvent.Raise(1);
+        
+        while (Time.timeSinceLevelLoad < 10f)
+            yield return null;
+        
+        timerEvent.Raise(0);
     }
 }

@@ -12,10 +12,8 @@ public class ClimbingHandler : MonoBehaviour
     [Space]
     [SerializeField] private ContinuousMoveProviderBase moveProvider;
 
-    private PhysicsHands2 currentHandGrip = null;
+    private PhysicsHands2 currentClimbingHand;
     private CapsuleCollider col;
-    private PlayerController2 playerController;
-    private Vector3 targetPos;
     private Rigidbody rb;
     private ColliderFollow colFollow;
     private Camera cam;
@@ -26,7 +24,6 @@ public class ClimbingHandler : MonoBehaviour
     private void Awake() {
         cam = Camera.main;
         col = GetComponent<CapsuleCollider>();
-        playerController = GetComponent<PlayerController2>();
         rb = GetComponent<Rigidbody>();
         colFollow = GetComponent<ColliderFollow>();
         collisionList = new List<BoxCollider>();
@@ -38,17 +35,21 @@ public class ClimbingHandler : MonoBehaviour
 
     public void OnClimbStart(PhysicsHands2 hand) {
         moveProvider.enabled = false;
-        col.enabled = false;
-        currentHandGrip = hand;
+        colFollow.SetIsClimbing(true);
+        currentClimbingHand = hand;
     }
 
     public void OnClimbEnd(PhysicsHands2 hand) {
-        if (currentHandGrip != hand) return;
+        if (currentClimbingHand != hand) return;
+
+        bool ledgeFound = Physics.Raycast(cam.transform.position, Vector3.down, rayLength);
+        if (!ledgeFound) return;
         
+        rb.AddForce(vaultForce * Vector3.up, ForceMode.Impulse);
+        colFollow.SetIsClimbing(false);
         moveProvider.enabled = true;
-        col.enabled = true;
-        currentHandGrip = null;
-        FindLedge();
+        currentClimbingHand = null;
+        // FindLedge();
     }
 
     private void FindLedge() {
@@ -67,26 +68,21 @@ public class ClimbingHandler : MonoBehaviour
         if (!collisionList.Contains(newLedge))
             collisionList.Add(newLedge);
         
-        print($"Enter {collisionList.Count}");
+        print($"Exited entered - " +
+              $"collisionList.Count = {collisionList.Count}");
     }
 
     private void OnTriggerExit(Collider other) {
         if (!other.gameObject.CompareTag(Tags.DefaultClimbable)) return;
         
-        var childColliders = other.GetComponentsInChildren<Transform>().Where(t => t.CompareTag("ClimbArea")).ToArray();
+        var childColliders = other.GetComponentsInChildren<Transform>().Where(t => t.CompareTag(Tags.ClimbArea)).ToArray();
         if (childColliders.Length != 1) return;
         
         BoxCollider childCollider = childColliders[0].GetComponent<BoxCollider>();
         collisionList.Remove(childCollider);
         Utility.RemoveClimbArea(childCollider);
         
-        print($"Exit {collisionList.Count}");
+        print($"Exited trigger - " +
+              $"collisionList.Count = {collisionList.Count}");
     }
-
-    // public void OnTriggerExited(BoxCollider currentCollider) {
-    //     if (!leftPhysicsHand.CollisionList.Contains(currentCollider) && !rightPhysicsHand.CollisionList.Contains(currentCollider))
-    //         Utility.RemoveClimbArea(currentCollider);
-    //     else
-    //         print("contained in one hand");
-    // }
 }

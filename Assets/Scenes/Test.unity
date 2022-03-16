@@ -1363,6 +1363,7 @@ GameObject:
   - component: {fileID: 655449680}
   - component: {fileID: 655449679}
   - component: {fileID: 655449678}
+  - component: {fileID: 655449681}
   m_Layer: 5
   m_Name: Text (TMP)
   m_TagString: Untagged
@@ -1498,6 +1499,34 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 655449676}
   m_CullTransparentMesh: 1
+--- !u!114 &655449681
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 655449676}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5a6e2414678648acabd713ae41f7ce9b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  gameEvent: {fileID: 11400000, guid: efef94d7aa8e6ac4db6c08351ee76acf, type: 2}
+  unityEventResponse:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 655449678}
+        m_TargetAssemblyTypeName: Timer, Assembly-CSharp
+        m_MethodName: HandleTimer
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &681919221
 GameObject:
   m_ObjectHideFlags: 0
@@ -1681,6 +1710,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   text: {fileID: 655449679}
   climbingColliderHeight: 0
+  col: {fileID: 0}
+  xrOrigin: {fileID: 0}
+  isClimbing: 0
+  yCenterAtStart: 0
+  currentClimbState: 0
 --- !u!114 &712931355
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3268,7 +3302,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1140164593}
   - component: {fileID: 1140164595}
-  - component: {fileID: 1140164594}
   - component: {fileID: 1140164596}
   - component: {fileID: 1140164597}
   - component: {fileID: 1140164598}
@@ -3298,26 +3331,6 @@ Transform:
   m_Father: {fileID: 576211584}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1140164594
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1140164592}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6a6d95ec81cf15047804e496d9d4b1a2, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  frequency: 50
-  damping: 1
-  rotFrequency: 100
-  rotDamping: 0.9
-  playerRigidbody: {fileID: 0}
-  target: {fileID: 1556265746}
-  climbForce: 500
-  climbDrag: 500
 --- !u!54 &1140164595
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -3347,10 +3360,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   player: {fileID: 712931357}
-  ledgeGrabMaxDistance: 0
-  climbLayer:
+  climbPointLayer:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 1024
+  ledgeGrabMaxDistance: 0.3
   onClimbStart: {fileID: 11400000, guid: 79eb0a1d460bb334e91521dea7610095, type: 2}
   onClimbEnd: {fileID: 11400000, guid: 8694556fb6e6ffc4dac0f864ea63b9ae, type: 2}
   frequency: 50
@@ -3687,10 +3700,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 1192421756}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7393dfe120de6364e893ca4595a2ea33, type: 3}
+  m_Script: {fileID: 11500000, guid: 57d0f7b49ae54e53bf0d5f94a6d4af53, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  activate: {fileID: 11400000, guid: 0903d36312db75849ae8fd1c51c5b651, type: 2}
+  timerEvent: {fileID: 11400000, guid: efef94d7aa8e6ac4db6c08351ee76acf, type: 2}
 --- !u!4 &1192421758
 Transform:
   m_ObjectHideFlags: 0
@@ -3715,7 +3728,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1200865274}
   - component: {fileID: 1200865276}
-  - component: {fileID: 1200865275}
   - component: {fileID: 1200865277}
   - component: {fileID: 1200865279}
   - component: {fileID: 1200865278}
@@ -3747,26 +3759,6 @@ Transform:
   m_Father: {fileID: 576211584}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1200865275
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1200865273}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6a6d95ec81cf15047804e496d9d4b1a2, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  frequency: 50
-  damping: 1
-  rotFrequency: 100
-  rotDamping: 0.9
-  playerRigidbody: {fileID: 0}
-  target: {fileID: 1043919266}
-  climbForce: 500
-  climbDrag: 500
 --- !u!54 &1200865276
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -3796,10 +3788,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   player: {fileID: 712931357}
-  ledgeGrabMaxDistance: 0
-  climbLayer:
+  climbPointLayer:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 1024
+  ledgeGrabMaxDistance: 0.3
   onClimbStart: {fileID: 11400000, guid: 79eb0a1d460bb334e91521dea7610095, type: 2}
   onClimbEnd: {fileID: 11400000, guid: 8694556fb6e6ffc4dac0f864ea63b9ae, type: 2}
   frequency: 50

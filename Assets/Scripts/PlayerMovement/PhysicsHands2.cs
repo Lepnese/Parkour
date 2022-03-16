@@ -1,18 +1,14 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using UnityEditor.Experimental.GraphView;
 using UnityEngine;
-using UnityEngine.InputSystem;
-using UnityEngine.XR.Interaction.Toolkit;
 
 public class PhysicsHands2 : MonoBehaviour
 {
     [SerializeField] private ClimbingHandler player;
 
     [Header("Climbing")] 
+    [SerializeField] private LayerMask climbPointLayer;
     [SerializeField] private float ledgeGrabMaxDistance = 1f;
-    [SerializeField] private LayerMask climbLayer;
     [SerializeField] private PhysicsHandsEvent onClimbStart;
     [SerializeField] private PhysicsHandsEvent onClimbEnd;
     [Header("PID Movement Values")]
@@ -49,7 +45,8 @@ public class PhysicsHands2 : MonoBehaviour
     }
 
     private void OnDrawGizmos() {
-        Gizmos.DrawSphere(transform.position, ledgeGrabRange);
+        // Gizmos.DrawSphere(transform.position, ledgeGrabRange);
+        Gizmos.DrawSphere(transform.position, ledgeGrabMaxDistance);
     }
 
     private void Update() {
@@ -168,7 +165,7 @@ public class PhysicsHands2 : MonoBehaviour
         
         isHoldingGripBtn = true;
         
-        bool isNearLedge = Physics.CheckSphere(transform.position, ledgeGrabMaxDistance, (int)Layers.ClimbPoint);
+        bool isNearLedge = Physics.CheckSphere(transform.position, ledgeGrabMaxDistance, climbPointLayer);
         if (!isNearLedge) return;
         
         FixHandPosition();
