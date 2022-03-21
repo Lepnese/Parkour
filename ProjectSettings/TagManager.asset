@@ -6,6 +6,8 @@ TagManager:
   tags:
   - ClimbPoint
   - Ground
+  - NotClimbable
+  - Climbable
   layers:
   - Default
   - TransparentFX
