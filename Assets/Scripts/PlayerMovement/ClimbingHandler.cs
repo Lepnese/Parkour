@@ -1,4 +1,5 @@
-using System.Collections.Generic;
+using System;
+using System.Collections;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.XR.Interaction.Toolkit;
@@ -13,76 +14,68 @@ public class ClimbingHandler : MonoBehaviour
     [SerializeField] private ContinuousMoveProviderBase moveProvider;
 
     private PhysicsHands2 currentClimbingHand;
-    private CapsuleCollider col;
     private Rigidbody rb;
     private ColliderFollow colFollow;
     private Camera cam;
 
-    private List<BoxCollider> collisionList;
-    public List<BoxCollider> CollisionList => collisionList;
-    
     private void Awake() {
         cam = Camera.main;
-        col = GetComponent<CapsuleCollider>();
         rb = GetComponent<Rigidbody>();
         colFollow = GetComponent<ColliderFollow>();
-        collisionList = new List<BoxCollider>();
     }
-
-    private void Update() {
-        Debug.DrawRay(cam.transform.position, Vector3.down * rayLength);
-    }
-
+    
     public void OnClimbStart(PhysicsHands2 hand) {
         moveProvider.enabled = false;
         colFollow.SetIsClimbing(true);
         currentClimbingHand = hand;
+        rb.useGravity = false;
     }
 
     public void OnClimbEnd(PhysicsHands2 hand) {
         if (currentClimbingHand != hand) return;
 
-        bool ledgeFound = Physics.Raycast(cam.transform.position, Vector3.down, rayLength);
-        if (!ledgeFound) return;
-        
-        rb.AddForce(vaultForce * Vector3.up, ForceMode.Impulse);
-        colFollow.SetIsClimbing(false);
-        moveProvider.enabled = true;
         currentClimbingHand = null;
-        // FindLedge();
+        rb.useGravity = true;
+        
+        StartCoroutine(FindLedge());
     }
 
-    private void FindLedge() {
-        if (Physics.Raycast(cam.transform.position, Vector3.down, rayLength)) {
-            rb.AddForce(vaultForce * Vector3.up, ForceMode.Impulse);
-            colFollow.SetIsClimbing(false);
-            moveProvider.enabled = true;
+    private IEnumerator FindLedge() {
+        while (!Physics.Raycast(cam.transform.position, Vector3.down, rayLength)) {
+            Debug.DrawRay(cam.transform.position, Vector3.down * rayLength);
+            yield return null;
         }
+
+        colFollow.SetIsClimbing(false);
+        rb.AddForce(vaultForce * Vector3.up, ForceMode.Impulse);
+        moveProvider.enabled = true;
     }
     
     private void OnTriggerEnter(Collider other) {
-        if (!other.gameObject.CompareTag(Tags.DefaultClimbable)) return;
+        if (IsNotClimbableLayer(other.gameObject)) 
+            return;
+
+        if (other.gameObject.CompareTag(Tags.Climbable)) {
+            other.gameObject.AddComponent<BoxCollider>();
+            return;
+        }
         
-        var newLedge = Utility.CreateClimbArea(other.gameObject, relativeClimbAreaSize);
-        
-        if (!collisionList.Contains(newLedge))
-            collisionList.Add(newLedge);
-        
-        print($"Exited entered - " +
-              $"collisionList.Count = {collisionList.Count}");
+        Utility.CreateClimbArea(other.gameObject, relativeClimbAreaSize);
     }
 
+    private static bool IsNotClimbableLayer(GameObject obj)
+        => obj.CompareTag(Tags.NotClimbable) || obj.CompareTag(Tags.Player) || obj.layer == LayerMask.NameToLayer("UI");
+
     private void OnTriggerExit(Collider other) {
-        if (!other.gameObject.CompareTag(Tags.DefaultClimbable)) return;
+        if (other.GetType() != typeof(BoxCollider)) return;
+        if (IsNotClimbableLayer(other.gameObject)) return;
         
-        var childColliders = other.GetComponentsInChildren<Transform>().Where(t => t.CompareTag(Tags.ClimbArea)).ToArray();
-        if (childColliders.Length != 1) return;
+        Transform[] ledgeColliders = other.GetComponentsInChildren<Transform>().Where(t => t.CompareTag(Tags.Climbable)).ToArray();
         
-        BoxCollider childCollider = childColliders[0].GetComponent<BoxCollider>();
-        collisionList.Remove(childCollider);
-        Utility.RemoveClimbArea(childCollider);
-        
-        print($"Exited trigger - " +
-              $"collisionList.Count = {collisionList.Count}");
+        if (ledgeColliders.Length != 1)
+            throw new Exception("Ledge child object has more than 1 collider");
+
+        BoxCollider ledgeCollider = ledgeColliders[0].GetComponent<BoxCollider>();
+        Utility.RemoveClimbArea(ledgeCollider);
     }
 }

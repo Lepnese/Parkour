@@ -1,14 +1,16 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
 public class Hand : MonoBehaviour
 {
+    [Header("Identification")]
+    [SerializeField] private Controller handName;
+    
     [Header("Pressed Events")] 
     [SerializeField] private HandEvent onGripBtnDown;
     [SerializeField] private HandEvent onGripBtnUp;
+    [SerializeField] private VoidEvent onJumpBtnDown;
+    [SerializeField] private VoidEvent onJumpBtnUp;
     [Header("Values")]
     [SerializeField] private InputActionReference velocityReference = null;
     [SerializeField] private InputActionReference gripReference = null;
@@ -16,28 +18,37 @@ public class Hand : MonoBehaviour
     [Header("Pressed")]
     [SerializeField] private InputActionReference gripPressedReference = null;
     [SerializeField] private InputActionReference triggerPressedReference = null;
+    [SerializeField] private InputActionReference jumpBtnPressedReference = null;
 
     private bool isGripBtnDown;
     private bool isTriggerBtnDown;
+
+    public Controller Name => handName;
     
     public Vector3 Velocity => velocityReference.action.ReadValue<Vector3>();
     public float GripValue => gripReference.action.ReadValue<float>();
     public float TriggerValue => triggerReference.action.ReadValue<float>();
 
-    private void Awake() {
+    protected virtual void Awake() {
         gripPressedReference.action.started += OnGripDown;
         gripPressedReference.action.canceled += OnGripUp;
-
+        
         triggerPressedReference.action.started += OnTriggerDown;
         triggerReference.action.canceled += OnTriggerUp;
+        
+        jumpBtnPressedReference.action.started += OnJumpBtnDown;
+        jumpBtnPressedReference.action.canceled += OnJumpBtnUp;
     }
 
-    private void OnDestroy() {
+    protected virtual void OnDestroy() {
         gripPressedReference.action.started -= OnGripDown;
         gripPressedReference.action.canceled -= OnGripUp;
         
         triggerPressedReference.action.started -= OnTriggerDown;
         triggerReference.action.canceled -= OnTriggerUp;
+        
+        jumpBtnPressedReference.action.started -= OnJumpBtnDown;
+        jumpBtnPressedReference.action.canceled -= OnJumpBtnUp;
     }
 
     public bool GetHandButton(int btn) {
@@ -65,4 +76,20 @@ public class Hand : MonoBehaviour
     private void OnTriggerUp(InputAction.CallbackContext ctx) {
         isTriggerBtnDown = false;
     }
+    
+    private void OnJumpBtnDown(InputAction.CallbackContext obj) {
+        if (handName == Controller.right)
+            onJumpBtnDown.Raise();
+    }
+    
+    private void OnJumpBtnUp(InputAction.CallbackContext obj) {
+        if (handName == Controller.right)
+            onJumpBtnUp.Raise();
+    }
+}
+
+public enum Controller
+{
+    left,
+    right
 }

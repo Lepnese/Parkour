@@ -1,31 +1,35 @@
 using System.Collections;
-using TMPro;
 using UnityEngine;
 using Unity.XR.CoreUtils;
 
 public class ColliderFollow : MonoBehaviour
 {
+    [SerializeField] private float adjustmentSpeed = 5f;
+    [SerializeField] private float adjustmentThreshold = 0.1f;
+
     private CapsuleCollider col;
     private XROrigin xrOrigin;
     private bool isClimbing;
     private float yCenterAtStart;
     private Vector3 cameraCenter;
     private float cameraHeight;
-    private bool isGrounded;
 
     private void Awake() {
         col = GetComponent<CapsuleCollider>();
         xrOrigin = GetComponent<XROrigin>();
     }
-
-    private void Start() {
-        yCenterAtStart = col.center.y;
-    }
-
+    
     private void Update() {
         cameraCenter = xrOrigin.CameraInOriginSpacePos;
         cameraHeight = xrOrigin.CameraInOriginSpaceHeight;
-
+        
+        if (Time.timeSinceLevelLoad < 0.3f) {
+            yCenterAtStart = col.center.y;
+            col.height = cameraHeight;
+            col.center = cameraCenter;
+            return;
+        }
+        
         if (isClimbing)
             SetClimbingCollider();
         else
@@ -33,8 +37,17 @@ public class ColliderFollow : MonoBehaviour
     }
 
     private void SetNormalCollider() {
-        col.center = new Vector3(cameraCenter.x, yCenterAtStart, cameraCenter.z);
+        col.center = new Vector3(cameraCenter.x, cameraCenter.y / 2, cameraCenter.z);
+        
+        if (ColliderHeightBelowThreshold()) return;
         col.height = cameraHeight;
+    }
+
+    private IEnumerator AdjustCollider() {
+        while (ColliderHeightBelowThreshold()) {
+            col.height += adjustmentSpeed * Time.deltaTime;
+            yield return null;
+        }
     }
 
     private void SetClimbingCollider() {
@@ -42,13 +55,15 @@ public class ColliderFollow : MonoBehaviour
         col.height = 0f;
     }
 
+    private bool ColliderHeightBelowThreshold() => col.height < cameraHeight - adjustmentThreshold;
+
     public void SetIsClimbing(bool active) {
         isClimbing = active;
-        // StartCoroutine(T(active));
+        
+        if (active) return;
+        
+        if (ColliderHeightBelowThreshold())
+            StartCoroutine(AdjustCollider());
     }
-
-    private IEnumerator T(bool active) {
-        yield return new WaitForSeconds(0.1f);
-        isClimbing = active;
-    }
+    
 }

@@ -1,14 +1,13 @@
-﻿using System;
-using System.Linq;
+﻿using TMPro;
 using UnityEngine;
 
 public class PhysicsHands2 : MonoBehaviour
 {
-    [SerializeField] private ClimbingHandler player;
+    [SerializeField] private TextMeshProUGUI text;
 
-    [Header("Climbing")] 
-    [SerializeField] private LayerMask climbPointLayer;
-    [SerializeField] private float ledgeGrabMaxDistance = 1f;
+    [Header("Grappling")]
+    [SerializeField] private Transform grappleSpawnPoint;
+    [Header("Climbing")]
     [SerializeField] private PhysicsHandsEvent onClimbStart;
     [SerializeField] private PhysicsHandsEvent onClimbEnd;
     [Header("PID Movement Values")]
@@ -17,12 +16,11 @@ public class PhysicsHands2 : MonoBehaviour
     [SerializeField] private float rotFrequency = 100f;
     [SerializeField] private float rotDamping = 0.9f;
     [Header("Rigidbody Movement Values")]
-    public Hand targetController;
+    [SerializeField] private Hand trackedHand;
     [SerializeField] private float physicsRange = 0.15f;
-    [SerializeField] private float ledgeGrabRange = 0.35f;
     [SerializeField] private float climbForce = 1000f;
     [SerializeField] private float climbDrag = 500f;
-    [SerializeField] private LayerMask interactableLayers;
+    [SerializeField] private LayerMask collisionLayers;
     [Header("Player References")]
     [SerializeField] private Rigidbody playerRb;
 
@@ -30,34 +28,36 @@ public class PhysicsHands2 : MonoBehaviour
     private Transform targetTransform;
     private Vector3 previousPosition;
     private bool isHoldingGripBtn;
-    private bool posIsFixed;
+    private bool canClimb;
+    private BoxCollider closestLedge;
+
+    private HandPresence handPresence;
+
+    public Transform GrappleSpawnPoint => grappleSpawnPoint;
+    public Hand TrackedHand => trackedHand;
 
     private void Awake() {
         rb = GetComponent<Rigidbody>();
+        handPresence = GetComponent<HandPresence>();
     }
 
     private void Start() {
-        targetTransform = targetController.transform;
+        targetTransform = trackedHand.transform;
         rb.maxAngularVelocity = float.PositiveInfinity;
         transform.position = targetTransform.position;
         transform.rotation = targetTransform.rotation;
         previousPosition = transform.position;
     }
-
-    private void OnDrawGizmos() {
-        // Gizmos.DrawSphere(transform.position, ledgeGrabRange);
-        Gizmos.DrawSphere(transform.position, ledgeGrabMaxDistance);
-    }
-
+    
     private void Update() {
         var pos = transform.position;
         
-        if (isHoldingGripBtn && posIsFixed) {
+        if (isHoldingGripBtn && canClimb) {
             Climb();
             return;
         }
         
-        bool isCloseToObject = Physics.CheckSphere(pos, physicsRange, interactableLayers);
+        bool isCloseToObject = Physics.CheckSphere(pos, physicsRange, collisionLayers);
         if (isCloseToObject) {
             // Controller moves using PID (rigidbody motion)
             PIDMovement();
@@ -71,35 +71,34 @@ public class PhysicsHands2 : MonoBehaviour
     }
 
     private void FixHandPosition() {
-        if (player.CollisionList.Count == 0) return;
+        var grabPoint = closestLedge.ClosestPoint(transform.position);
+        transform.position = grabPoint;
         
-        BoxCollider closestLedge = player.CollisionList.Count == 1 ? 
-            player.CollisionList[0] :
-            player.CollisionList.OrderBy(col => (transform.position - col.transform.position).sqrMagnitude).First();
+        if (IsGrabbingCorner(grabPoint))
+            handPresence.OnEdge(true);
+        else
+            handPresence.OnFlatSurface(true);
         
-        if (!closestLedge) return;
-        ToggleHandColliders();
-        
-        var closestPoint = closestLedge.ClosestPoint(transform.position);
-        transform.position = closestPoint;
+        rb.constraints = RigidbodyConstraints.FreezeAll;
+        canClimb = true;
+    }
 
-        var localPoint = closestLedge.transform.InverseTransformPoint(closestPoint);
-        var localDir = localPoint.normalized;
+    // CETTE SECTION VIENT D'UNE SOURCE EXTÉRIEURE
+    private bool IsGrabbingCorner(Vector3 grabPoint) {
+        Vector3 localPoint = closestLedge.transform.InverseTransformPoint(grabPoint);
+        Vector3 localDir = localPoint.normalized;
 
         float upDot = Vector3.Dot(localDir, Vector3.up);
         float fwdDot = Vector3.Dot(localDir, Vector3.forward);
         float rightDot = Vector3.Dot(localDir, Vector3.right);
+
+        float topValue = Mathf.Abs(upDot);
+        float sideValue = Mathf.Max(Mathf.Abs(fwdDot), Mathf.Abs(rightDot));
         
-        float upPower = Mathf.Abs(upDot);
-        float fwdPower = Mathf.Abs(fwdDot);
-        float rightPower = Mathf.Abs(rightDot);
-        
-        print($"{upPower}, {fwdPower}, {rightPower}");
-        
-        rb.constraints = RigidbodyConstraints.FreezeAll;
-        posIsFixed = true;
+        return topValue <= sideValue + 0.1f;
     }
     
+    // CETTE SECTION VIENT D'UNE SOURCE EXTÉRIEURE
     private void Climb() {
         Vector3 displacementFromResting = transform.position - targetTransform.position;
         Vector3 force = displacementFromResting * climbForce;
@@ -108,7 +107,8 @@ public class PhysicsHands2 : MonoBehaviour
         playerRb.AddForce(force, ForceMode.Acceleration);
         playerRb.AddForce(drag * -playerRb.velocity * climbDrag, ForceMode.Acceleration);
     }
-
+    
+    // CETTE SECTION VIENT D'UNE SOURCE EXTÉRIEURE
     private float GetDrag() {
         Vector3 handVelocity = (targetTransform.localPosition - previousPosition) / Time.fixedDeltaTime;
         float drag = 1 / handVelocity.magnitude + 0.01f;
@@ -127,7 +127,8 @@ public class PhysicsHands2 : MonoBehaviour
         rb.angularVelocity = Vector3.zero;
         transform.localRotation = targetTransform.rotation;
     }
-
+    
+    // CETTE SECTION VIENT D'UNE SOURCE EXTÉRIEURE
     private void PIDMovement() {
         float kp = (6f * frequency) * (6f * frequency) * 0.25f;
         float kd = 4.5f * frequency * damping;
@@ -138,7 +139,8 @@ public class PhysicsHands2 : MonoBehaviour
                         (playerRb.velocity - rb.velocity) * kdg;
         rb.AddForce(force, ForceMode.Acceleration);
     }
-
+    
+    // CETTE SECTION VIENT D'UNE SOURCE EXTÉRIEURE
     private void PIDRotation() {
         float kp = (6f * rotFrequency) * (6f * rotFrequency) * 0.25f;
         float kd = 4.5f * rotFrequency * rotDamping;
@@ -161,29 +163,42 @@ public class PhysicsHands2 : MonoBehaviour
     }
     
     public void OnGripBtnDown(Hand hand) {
-        if (hand != targetController) return;
+        if (hand != trackedHand) return;
         
         isHoldingGripBtn = true;
         
-        bool isNearLedge = Physics.CheckSphere(transform.position, ledgeGrabMaxDistance, climbPointLayer);
-        if (!isNearLedge) return;
+        if (!closestLedge) return;
         
         FixHandPosition();
         onClimbStart.Raise(this);
     }
     
     public void OnGripBtnUp(Hand hand) {
-        if (hand != targetController) return;
-        onClimbEnd.Raise(this);
-        
+        if (hand != trackedHand) return;
+
         isHoldingGripBtn = false;
-        posIsFixed = false;
+        canClimb = false;
         rb.constraints = RigidbodyConstraints.None;
         
-        ToggleHandColliders();
+        handPresence.OnEdge(false);
+        handPresence.OnFlatSurface(false);
+        onClimbEnd.Raise(this);
     }
 
-    private void ToggleHandColliders() {
+    private void OnTriggerEnter(Collider other) {
+        if (!(other.CompareTag(Tags.Climbable) || other.CompareTag(Tags.ClimbableSurface)))
+            return;
         
+        closestLedge = other.GetComponent<BoxCollider>();
+        
+        if (!closestLedge)
+            Debug.LogWarning($"GameObject {other} does not contain a collider but is tagged: {other.tag}");
+    }
+
+    private void OnTriggerExit(Collider other) {
+        if (!(other.CompareTag(Tags.Climbable) || other.CompareTag(Tags.ClimbableSurface))) 
+            return;
+        
+        closestLedge = null;
     }
 }

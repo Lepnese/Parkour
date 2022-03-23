@@ -4,9 +4,14 @@ public class Grappling : MonoBehaviour {
 
     [SerializeField] private PhysicsHands2 leftHandPhysics;
     [SerializeField] private PhysicsHands2 rightHandPhysics;
-    [SerializeField] private LayerMask whatIsGrappable;
+    [SerializeField] private LayerMask grappableLayer;
     [SerializeField] private Transform player;
     [SerializeField] private float sphereCastRadius = 1f;
+
+    [Header("Joint Values")] 
+    [SerializeField] private float spring = 4.5f;
+    [SerializeField] private float damper = 7f;
+    [SerializeField] private float massScale = 4.5f;
 
     private PhysicsHands2 grappleHand;
     private Hand leftHand;
@@ -20,20 +25,20 @@ public class Grappling : MonoBehaviour {
 
     private SpringJoint joint;
     private float maxDistance = 100f;
-    private bool pressing;
 
     private void Awake() {
-        leftHand = leftHandPhysics.targetController;
-        rightHand = rightHandPhysics.targetController;
+        leftHand = leftHandPhysics.TrackedHand;
+        rightHand = rightHandPhysics.TrackedHand;
     }
 
+    // CETTE SECTION VIENT D'UNE SOURCE EXTÉRIEURE
     private void Update() {
         Debug.DrawLine(leftHand.transform.position, leftHand.transform.TransformDirection(Vector3.forward) * 100f);
 
         grappleHand = GetGrappleHand();
         if (grappleHand && !joint) {
             lr = grappleHand.GetComponentInChildren<LineRenderer>();
-            spawnPoint = grappleHand.transform.Find("Grapple Spawn Point");
+            spawnPoint = grappleHand.GrappleSpawnPoint;
             StartGrapple();
         }
         else if (!grappleHand && joint) {
@@ -41,10 +46,11 @@ public class Grappling : MonoBehaviour {
         }
     }
 
+    // Checks which hand is pressing both trigger and grip buttons
     private PhysicsHands2 GetGrappleHand() {
-        if (leftHand.TriggerValue > 0.1f && leftHand.GripValue > 0.1f)
+        if (leftHand.GetHandButton(0) && leftHand.GetHandButton(1))
             return leftHandPhysics;
-        if (rightHand.TriggerValue > 0.1f && rightHand.GripValue > 0.1f)
+        if (rightHand.GetHandButton(0) && rightHand.GetHandButton(1))
             return rightHandPhysics;
         return null;
     }
@@ -53,11 +59,12 @@ public class Grappling : MonoBehaviour {
         DrawRope();
     }
 
+    // CETTE SECTION VIENT D'UNE SOURCE EXTÉRIEURE
     private void StartGrapple() {
         Vector3 origin = grappleHand.transform.position;
         Vector3 direction = grappleHand.transform.TransformDirection(Vector3.forward);
         
-        if (Physics.SphereCast(origin, sphereCastRadius, direction, out RaycastHit hit, maxDistance, whatIsGrappable)) {
+        if (Physics.SphereCast(origin, sphereCastRadius, direction, out RaycastHit hit, maxDistance, grappableLayer)) {
             grapplePoint = hit.point;
             joint = player.gameObject.AddComponent<SpringJoint>();
             joint.autoConfigureConnectedAnchor = false;
@@ -69,21 +76,22 @@ public class Grappling : MonoBehaviour {
             joint.maxDistance = distanceFromPoint * 0.8f;
             joint.minDistance = distanceFromPoint * 0.25f;
 
-            //Adjust these values to fit your game.
-            joint.spring = 4.5f;
-            joint.damper = 7f;
-            joint.massScale = 4.5f;
+            joint.spring = spring;
+            joint.damper = damper;
+            joint.massScale = massScale;
 
             lr.positionCount = 2;
             currentGrapplePosition = spawnPoint.position;
         }
     }
     
+    // CETTE SECTION VIENT D'UNE SOURCE EXTÉRIEURE
     private void StopGrapple() {
         lr.positionCount = 0;
         Destroy(joint);
     }
     
+    // CETTE SECTION VIENT D'UNE SOURCE EXTÉRIEURE
     private void DrawRope() {
         if (!joint) return;
 
