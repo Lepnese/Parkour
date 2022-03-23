@@ -1,21 +1,29 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.XR.Interaction.Toolkit;
+using Unity.XR.CoreUtils;
 
 public class PortalTeleporter : MonoBehaviour
 {
 
-	public Transform player;
+	public XROrigin player;
 	public Transform reciever;
 
+	private Transform playerTransform;
 	private bool playerIsOverlapping = false;
 
-	// Update is called once per frame
-	void Update()
+    private void Awake()
+    {
+		playerTransform = player.GetComponent<Transform>();
+    }
+
+    // Update is called once per frame
+    void Update()
 	{
 		if (playerIsOverlapping)
 		{
-			Vector3 portalToPlayer = player.position - transform.position;
+			Vector3 portalToPlayer = playerTransform.position - transform.position;
 			float dotProduct = Vector3.Dot(transform.up, portalToPlayer);
 
 			// If this is true: The player has moved across the portal
@@ -24,10 +32,10 @@ public class PortalTeleporter : MonoBehaviour
 				// Teleport him!
 				float rotationDiff = -Quaternion.Angle(transform.rotation, reciever.rotation);
 				rotationDiff += 180;
-				player.Rotate(Vector3.up, rotationDiff);
+				playerTransform.Rotate(Vector3.up, rotationDiff);
 
 				Vector3 positionOffset = Quaternion.Euler(0f, rotationDiff, 0f) * portalToPlayer;
-				player.position = reciever.position + positionOffset;
+				playerTransform.position = reciever.position + positionOffset;
 
 				playerIsOverlapping = false;
 			}
@@ -36,7 +44,7 @@ public class PortalTeleporter : MonoBehaviour
 
 	void OnTriggerEnter(Collider other)
 	{
-		if (other.tag == "Player")
+		if (other.CompareTag("Player"))
 		{
 			playerIsOverlapping = true;
 		}
@@ -44,7 +52,7 @@ public class PortalTeleporter : MonoBehaviour
 
 	void OnTriggerExit(Collider other)
 	{
-		if (other.tag == "Player")
+		if (other.CompareTag("Player"))
 		{
 			playerIsOverlapping = false;
 		}
