@@ -2522,6 +2522,14 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 393022321045560464, guid: fd13ec33c465e194f86a08521d7ab3fd, type: 3}
+      propertyPath: maxDistanceFromTrackedHand
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 393022321115161753, guid: fd13ec33c465e194f86a08521d7ab3fd, type: 3}
+      propertyPath: maxDistanceFromTrackedHand
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 393022321124648120, guid: fd13ec33c465e194f86a08521d7ab3fd, type: 3}
       propertyPath: m_Name
       value: Player

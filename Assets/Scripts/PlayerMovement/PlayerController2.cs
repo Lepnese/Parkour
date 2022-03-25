@@ -155,8 +155,9 @@ public class PlayerController2 : MonoBehaviour
     }
 
     private void Jump() {
+        var handSpeed = (leftHand.Velocity.magnitude + rightHand.Velocity.magnitude) / 2f;
         var vel = rb.velocity;
-        rb.velocity = new Vector3(vel.x, AverageJumpingHandSpeed * jumpVelocity, vel.z);
+        rb.velocity = new Vector3(vel.x, handSpeed * jumpVelocity, vel.z);
 
         // rb.AddForce(jumpForce * Vector3.up * AverageJumpingHandSpeed, ForceMode.Impulse);
     }
