@@ -4,4 +4,5 @@ public static class Tags {
     public const string Climbable = "Climbable";
     public const string NotClimbable = "NotClimbable";
     public const string ClimbableSurface = "ClimbableSurface";
+    public const string InteractableArea = "InteractableArea";
 }

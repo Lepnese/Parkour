@@ -6,37 +6,7 @@ using UnityEngine.UI;
 
 public class LevelLoader : MonoBehaviour
 {
-    //    public static LevelLoader Instance;
 
-    //[SerializeField] private GameObject loadercanvas;
-    //[SerializeField] private Image progressBar;
-    //void Awake()
-    //{
-    //    if (Instance = null)
-    //    {
-    //        Instance = this;
-    //        DontDestroyOnLoad(gameObject);
-    //    }
-    //    else
-    //        Destroy(gameObject);
-    //}
-
-    //public async void LoadScene(string sceneName)
-    //{
-    //    var scene = SceneManager.LoadSceneAsync(sceneName);
-    //    scene.allowSceneActivation = false;
-
-    //    loadercanvas.SetActive(true);
-
-    //    do
-    //    {
-    //        await Task.Delay(100);
-    //        progressBar.fillAmount = scene.progress;
-    //    }
-    //    while (scene.progress < 0.9f);
-
-    //    scene.allowSceneActivation = false;
-    //}
     public GameObject loadingScreen;
     public Slider slider;
     public Text progressText;
