@@ -1,11 +1,8 @@
-﻿using System;
-using TMPro;
+﻿using System.Collections;
 using UnityEngine;
 
 public class PhysicsHands2 : MonoBehaviour
 {
-    [SerializeField] private TextMeshProUGUI text;
-
     [Header("Grappling")]
     [SerializeField] private Transform grappleSpawnPoint;
     [Header("Climbing")]
@@ -82,10 +79,10 @@ public class PhysicsHands2 : MonoBehaviour
     private void FixHandPosition() {
         transform.position = grabPoint;
         
-        // if (IsGrabbingCorner(grabPoint))
-        //     handPresence.OnEdge(true);
-        // else
-        //     handPresence.OnFlatSurface(true);
+        if (IsGrabbingCorner(grabPoint))
+            handPresence.OnEdge(true);
+        else
+            handPresence.OnFlatSurface(true);
         
         rb.constraints = RigidbodyConstraints.FreezeAll;
         canClimb = true;
@@ -173,15 +170,25 @@ public class PhysicsHands2 : MonoBehaviour
     
     public void OnGripBtnDown(Hand hand) {
         if (hand != trackedHand) return;
-        if (!currentLedge && !fullyClimbable) return;
 
-        var closestCollider = FindClimbableCollider();
-        grabPoint = closestCollider.ClosestPoint(transform.position);
+        StartCoroutine(CheckForLedge());
+    }
+
+    private IEnumerator CheckForLedge() {
+        var time = Time.time;
+
+        while (Time.time - time < 1f && trackedHand.GetHandButton(1)) {
+            if (currentLedge || fullyClimbable) {
+                var closestCollider = FindClimbableCollider();
+                grabPoint = closestCollider.ClosestPoint(transform.position);
         
-        if (Vector3.Distance(grabPoint, transform.position) > grabRange.radius) return;
-        if (closestCollider == currentLedge && !IsValidGrabPoint()) return;
+                if (Vector3.Distance(grabPoint, transform.position) > grabRange.radius) yield break;
+                if (closestCollider == currentLedge && !IsValidGrabPoint()) yield break;
 
-        FixHandPosition();
+                FixHandPosition();
+            }
+            yield return null;
+        }
     }
 
     private Collider FindClimbableCollider() {
@@ -210,8 +217,9 @@ public class PhysicsHands2 : MonoBehaviour
 
     public void OnGripBtnUp(Hand hand) {
         if (hand != trackedHand) return;
-
+        
         canClimb = false;
+        
         rb.constraints = RigidbodyConstraints.None;
         
         handPresence.OnEdge(false);
@@ -228,6 +236,17 @@ public class PhysicsHands2 : MonoBehaviour
         }
         
         currentLedge = other.GetComponent<Collider>();
+    }
+
+    private void OnTriggerExit(Collider other) {
+        var col = other.GetComponent<Collider>();
+        
+        if (col == fullyClimbable) {
+            fullyClimbable = null;
+        }
+        else if (col == currentLedge) {
+            currentLedge = null;
+        }
     }
 
     private static bool IsNotClimbableLayer(GameObject obj)

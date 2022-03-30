@@ -1,18 +1,19 @@
-using System.Collections;
-using System.Collections.Generic;
+using System;
 using UnityEngine;
 using System.Linq;
 using UnityEngine.XR.Interaction.Toolkit;
 
 public class PlayerController2 : MonoBehaviour
 {
-    public bool isTrue;
+    [Header("Interactable Events")]
+    [SerializeField] private BoolEvent onAreaEnter;
+    
     [Header("Player")]
     [SerializeField] private GameObject leftHandObj;
     [SerializeField] private GameObject rightHandObj;
     [SerializeField] private GameObject centerEyeCamera;
     [SerializeField] private ActionBasedContinuousMoveProvider moveProvider;
-    [SerializeField] private LayerMask groundLayers;
+    [SerializeField] private LayerMask playerLayers;
 
     [Header("Sprint")]
     [SerializeField] private float sprintSpeed = 200f;
@@ -21,6 +22,7 @@ public class PlayerController2 : MonoBehaviour
     [SerializeField] private float airMultiplier = 0.4f;
 
     [Header("Jump")]
+    [SerializeField] private float maxHandSpeed;
     [SerializeField] private float jumpVelocity = 5f;
     [SerializeField] private float fallMultiplier = 2.5f;
     [SerializeField] private float lowJumpMultiplier = 2f;
@@ -32,31 +34,21 @@ public class PlayerController2 : MonoBehaviour
     private int frameCounter;
     private bool isGrounded;
     private bool isJumpBtnDown;
-    private bool handVelocityTrackingActive;
 
-    private float[] velocityArray;
-    private Vector3[] speedArray;
-    private List<float> jumpingHandVelocity;
+    private float[] handVelocityArray;
     
     private Hand leftHand;
     private Hand rightHand;
     
-    private Vector3 lastFramePosition;
     private Vector3 forwardDirection;
 
     private CapsuleCollider col;
     private Transform cameraTransform;
     private Rigidbody rb;
-    
 
-
-    private float AverageHandSpeed => velocityArray.Average();
-
-    private float AverageJumpingHandSpeed => jumpingHandVelocity.Average();
+    private float AverageHandSpeed => handVelocityArray.Average();
     
     private void Awake() {
-        jumpingHandVelocity = new List<float>();
-        
         col = GetComponent<CapsuleCollider>();
         rb = GetComponent<Rigidbody>();
         leftHand = leftHandObj.GetComponent<Hand>();
@@ -64,11 +56,8 @@ public class PlayerController2 : MonoBehaviour
     }
 
     private void Start() {
-        velocityArray = new float[30];
-        speedArray = new Vector3[30];
+        handVelocityArray = new float[30];
         cameraTransform = centerEyeCamera.transform;
-        lastFramePosition = transform.position;
-        handVelocityTrackingActive = true;
     }
 
     private void Update() {
@@ -76,55 +65,30 @@ public class PlayerController2 : MonoBehaviour
 
         isGrounded = Physics.Raycast(
             cameraTransform.position,
-            Vector3.down, col.height + 0.05f, groundLayers);
+            Vector3.down, col.height + 0.05f, ~playerLayers);
         
         Debug.DrawRay(cameraTransform.position,
                     Vector3.down * (col.height + 0.05f));
         
         forwardDirection = cameraTransform.TransformDirection(Vector3.forward).normalized;
         
-        TrackPlayerSpeed();
         TrackHandSpeed();
         ControlDrag();
-        if (isTrue)
-            AdjustGravity();
-    }
-
-    private void AdjustGravity() {
-        if (rb.velocity.y < 0)
-            rb.velocity += Vector3.up * Physics.gravity.y * (fallMultiplier - 1) * Time.deltaTime;
-        else if (rb.velocity.y > 0 && !isJumpBtnDown)
-            rb.velocity += Vector3.up * Physics.gravity.y * (lowJumpMultiplier - 1) * Time.deltaTime;
-    }
-
-    private IEnumerator TrackJumpingHandSpeed() {
-        jumpingHandVelocity.Clear();
-        
-        while (isJumpBtnDown) {
-            jumpingHandVelocity.Add((leftHand.Velocity.magnitude + rightHand.Velocity.magnitude) / 2);
-            yield return null;
-        }
     }
 
     private void FixedUpdate() {
         if (!isGrounded) return;
-        if (!IsJoystickMoving()) return;
+        if (!IsMovingForward()) return;
         Run();
         // ManageRun();
     }
-
-    private void LateUpdate() {
-        lastFramePosition = transform.position;
-    }
-
-    private void TrackPlayerSpeed() => speedArray[frameCounter % speedArray.Length] = (transform.position - lastFramePosition) / Time.deltaTime;
-
+    
     private void TrackHandSpeed() {
         if (leftHand.Velocity.magnitude > 0.7f && rightHand.Velocity.magnitude > 0.7f) {
-            velocityArray[frameCounter % velocityArray.Length] = (leftHand.Velocity.magnitude + rightHand.Velocity.magnitude) / 2;
+            handVelocityArray[frameCounter % handVelocityArray.Length] = (leftHand.Velocity.magnitude + rightHand.Velocity.magnitude) / 2;
         }
         else {
-            velocityArray[frameCounter % velocityArray.Length] = 0f;
+            handVelocityArray[frameCounter % handVelocityArray.Length] = 0f;
         }
     } 
 
@@ -133,50 +97,31 @@ public class PlayerController2 : MonoBehaviour
     }
 
     private void Run() {
-        rb.AddForce(forwardDirection * sprintSpeed * AverageHandSpeed);
-
-        // if (rb.velocity.magnitude < maxSpeed) return;
-        //
-        // var normalized = Mathf.Sqrt(Mathf.Pow(rb.velocity.x, 2) + Mathf.Pow(rb.velocity.z, 2));
-        // var xNorm = rb.velocity.x / normalized;
-        // var zNorm = rb.velocity.z / normalized;
-        //
-        // rb.velocity = new Vector3(xNorm * maxSpeed, rb.velocity.y, zNorm * maxSpeed);
-        // rb.velocity = rb.velocity.normalized * maxSpeed;
-    }
-    
-    private void ManageRun() {
-        if (isGrounded)
-            rb.AddForce(forwardDirection.normalized * sprintSpeed * sprintMultiplier * AverageHandSpeed,
-                ForceMode.Acceleration);
-        else
-            rb.AddForce(forwardDirection.normalized * sprintSpeed * sprintMultiplier * airMultiplier * AverageHandSpeed,
-                ForceMode.Acceleration);
+        var controlledSpeed = Mathf.Clamp(AverageHandSpeed, 0f, maxSpeed);
+        rb.AddForce(forwardDirection * sprintSpeed * controlledSpeed);
     }
 
     private void Jump() {
         var handSpeed = (leftHand.Velocity.magnitude + rightHand.Velocity.magnitude) / 2f;
-        var vel = rb.velocity;
-        rb.velocity = new Vector3(vel.x, handSpeed * jumpVelocity, vel.z);
+        var controlledSpeed = Mathf.Clamp(handSpeed, 0f, maxHandSpeed);
 
-        // rb.AddForce(jumpForce * Vector3.up * AverageJumpingHandSpeed, ForceMode.Impulse);
+        rb.AddForce(jumpVelocity * Vector3.up * controlledSpeed, ForceMode.Impulse);
     }
-
-    // Checks if player is moving with the joystick
-    private bool IsJoystickMoving() => moveProvider.leftHandMoveAction.action.ReadValue<Vector2>() != Vector2.zero;
-
-    public void OnJumpBtnDown() {
-        isJumpBtnDown = true;
-        handVelocityTrackingActive = false; 
-        
-        StartCoroutine(TrackJumpingHandSpeed());
-    }
+    
+    private bool IsMovingForward() => moveProvider.leftHandMoveAction.action.ReadValue<Vector2>().y > 0f;
 
     public void OnJumpBtnUp() {
-        isJumpBtnDown = false;
-        handVelocityTrackingActive = true;
-    
         if (isGrounded)
             Jump();
+    }
+
+    private void OnTriggerEnter(Collider other) {
+        if (other.CompareTag(Tags.InteractableArea))
+            onAreaEnter.Raise(true);
+    }
+    
+    private void OnTriggerExit(Collider other) {
+        if (other.CompareTag(Tags.InteractableArea))
+            onAreaEnter.Raise(false);
     }
 }

@@ -8,6 +8,7 @@ TagManager:
   - Climbable
   - ClimbableSurface
   - NotClimbable
+  - InteractableArea
   layers:
   - Default
   - TransparentFX

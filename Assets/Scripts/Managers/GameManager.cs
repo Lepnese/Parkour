@@ -8,11 +8,11 @@ public class GameManager : MonoBehaviour
         while (Time.timeSinceLevelLoad < 5f)
             yield return null;
         
-        timerEvent.Raise(1);
+        // timerEvent.Raise(1);
         
         while (Time.timeSinceLevelLoad < 10f)
             yield return null;
         
-        timerEvent.Raise(0);
+        // timerEvent.Raise(0);
     }
 }
