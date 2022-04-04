@@ -1,8 +1,10 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using UnityEngine;
 
 public class PhysicsHands2 : MonoBehaviour
 {
+    public Collider col;
     [Header("Grappling")]
     [SerializeField] private Transform grappleSpawnPoint;
     [Header("Climbing")]
@@ -30,6 +32,7 @@ public class PhysicsHands2 : MonoBehaviour
     private bool canClimb;
     private Collider currentLedge;
     private Collider fullyClimbable;
+    private Collider closestCollider;
     private SphereCollider grabRange;
     private Vector3 grabPoint;
 
@@ -87,6 +90,15 @@ public class PhysicsHands2 : MonoBehaviour
         rb.constraints = RigidbodyConstraints.FreezeAll;
         canClimb = true;
         onClimbStart.Raise(this);
+    }
+
+    private void OnDrawGizmos() {
+        var point = new Vector3(-0.5f, 13.64f, -0.3f);
+        Gizmos.DrawSphere(point, 0.02f);
+
+        var edgePoint = point;
+        edgePoint.x = col.bounds.center.x - col.bounds.extents.x;
+        Gizmos.DrawSphere(edgePoint, 0.02f);
     }
 
     // CETTE SECTION VIENT D'UNE SOURCE EXTÉRIEURE
@@ -179,7 +191,7 @@ public class PhysicsHands2 : MonoBehaviour
 
         while (Time.time - time < 1f && trackedHand.GetHandButton(1)) {
             if (currentLedge || fullyClimbable) {
-                var closestCollider = FindClimbableCollider();
+                closestCollider = FindClimbableCollider();
                 grabPoint = closestCollider.ClosestPoint(transform.position);
         
                 if (Vector3.Distance(grabPoint, transform.position) > grabRange.radius) yield break;
