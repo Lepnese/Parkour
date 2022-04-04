@@ -4,7 +4,7 @@ using Unity.XR.CoreUtils;
 public class PortalTeleporter : MonoBehaviour
 {
 	[SerializeField] private XROrigin player;
-	[SerializeField] private Transform reciever;
+	[SerializeField] private Transform receiver;
 
 	private Transform playerTransform;
 	private bool playerIsOverlapping = false;
@@ -23,12 +23,12 @@ public class PortalTeleporter : MonoBehaviour
 		if (dotProduct >= 0f) return;
 		
 		// Teleport him!
-		float rotationDiff = -Quaternion.Angle(transform.rotation, reciever.rotation);
+		float rotationDiff = -Quaternion.Angle(transform.rotation, receiver.rotation);
 		rotationDiff += 180;
 		playerTransform.Rotate(Vector3.up, rotationDiff);
 
 		Vector3 positionOffset = Quaternion.Euler(0f, rotationDiff, 0f) * portalToPlayer;
-		playerTransform.position = reciever.position + positionOffset;
+		playerTransform.position = receiver.position + positionOffset;
 
 		playerIsOverlapping = false;
 	}
