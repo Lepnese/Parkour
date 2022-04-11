@@ -3,16 +3,11 @@ using Unity.XR.CoreUtils;
 
 public class PortalTeleporter : MonoBehaviour
 {
-	[SerializeField] private XROrigin player;
 	[SerializeField] private Transform receiver;
 
 	private Transform playerTransform;
 	private bool playerIsOverlapping = false;
-
-    private void Awake() {
-		playerTransform = player.GetComponent<Transform>();
-    }
-
+	
     private void Update() {
 		if (!playerIsOverlapping) return;
 		
@@ -34,8 +29,10 @@ public class PortalTeleporter : MonoBehaviour
 	}
 
 	private void OnTriggerEnter(Collider other) {
-		if (other.CompareTag("Player"))
+		if (other.CompareTag("Player")) {
+			playerTransform = other.GetComponent<Transform>();
 			playerIsOverlapping = true;
+		}
 	}
 
 	private void OnTriggerExit(Collider other) {

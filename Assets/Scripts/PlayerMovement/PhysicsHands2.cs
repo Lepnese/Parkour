@@ -226,8 +226,9 @@ public class PhysicsHands2 : MonoBehaviour
         while (Time.time - time < ledgeGrabTimeDelay && trackedHand.GetHandButton(1)) {
             if (currentLedge || fullyClimbable) {
                 closestCollider = FindClimbableCollider();
-                grabPoint = closestCollider.ClosestPoint(transform.position);
-        
+
+                grabPoint = GetClosestPoint();
+
                 if (Vector3.Distance(grabPoint, transform.position) > grabRange.radius) yield break;
                 if (closestCollider == currentLedge && !IsValidGrabPoint()) yield break;
 
@@ -235,6 +236,22 @@ public class PhysicsHands2 : MonoBehaviour
             }
             yield return null;
         }
+    }
+
+    private Vector3 GetClosestPoint() {
+        Vector3 point;
+        var meshCollider = closestCollider.GetComponent<MeshCollider>();
+        
+        if (!meshCollider) {
+            point = closestCollider.ClosestPoint(transform.position);
+            return point;
+        }
+        
+        meshCollider.convex = true;
+        point = closestCollider.ClosestPoint(transform.position);
+        meshCollider.convex = false;
+    
+        return point;
     }
 
     private Collider FindClimbableCollider() {
