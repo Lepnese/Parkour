@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class PhysicsHands2 : MonoBehaviour
@@ -8,7 +9,7 @@ public class PhysicsHands2 : MonoBehaviour
     [Header("Climbing")] 
     [SerializeField] private float ledgeGrabTimeDelay = 0.5f;
     [SerializeField] private float minHeightFromTop = 0.3f;
-    [SerializeField] private Vector3 ledgeGrabRotation = new Vector3(282.059784f, 0.361582041f, 192.092636f);
+    [SerializeField] private Vector3 ledgeGrabRotation = new Vector3(282.059784f, 0, 192.092636f);
     [SerializeField] private Transform indexFingerTip;
     [SerializeField] private PhysicsHandsEvent onClimbStart;
     [SerializeField] private PhysicsHandsEvent onClimbEnd;
@@ -26,7 +27,7 @@ public class PhysicsHands2 : MonoBehaviour
     [SerializeField] private LayerMask collisionLayers;
     [Header("Player References")]
     [SerializeField] private Rigidbody playerRb;
-
+    
     private Rigidbody rb;
     private Transform targetTransform;
     private Vector3 previousPosition;
@@ -105,23 +106,30 @@ public class PhysicsHands2 : MonoBehaviour
         var gapToIndexFingerTip = indexFingerTip.position - transform.position;
         var yMax = curBounds.center.y + curBounds.extents.y - gapToIndexFingerTip.y;
         
-        Vector3[] edgePoints = {
-            new Vector3(curBounds.center.x + curBounds.extents.x, yMax, point.z), // Max X
-            new Vector3(curBounds.center.x - curBounds.extents.x, yMax, point.z), // Min X
-            new Vector3(point.x, yMax, curBounds.center.z + curBounds.extents.z), // Max Z
-            new Vector3(point.x, yMax, curBounds.center.z - curBounds.extents.z)  // Min Z
+        // Vector 3 -- Point on edge
+        // float -- Y rotation associated with side of ledge
+        var edgePoints = new Dictionary<Vector3, float>
+        {
+            [new Vector3(curBounds.center.x + curBounds.extents.x, yMax, point.z)] = 0f,
+            [new Vector3(curBounds.center.x - curBounds.extents.x, yMax, point.z)] = 180f,
+            [new Vector3(point.x, yMax, curBounds.center.z + curBounds.extents.z)] = -90f,
+            [new Vector3(point.x, yMax, curBounds.center.z - curBounds.extents.z)] = 90f
         };
         
         var minDistance = float.PositiveInfinity;
         var closestPoint = Vector3.zero;
 
-        foreach (var edgePoint in edgePoints) {
+        foreach (var pair in edgePoints) {
+            var edgePoint = pair.Key;
+            var yRotation = pair.Value;
+            
             var dist = Vector3.Distance(point, edgePoint);
             
             if (dist > minDistance) continue;
             
             minDistance = dist;
             closestPoint = edgePoint;
+            ledgeGrabRotation.y = yRotation;
         }
 
         return closestPoint;

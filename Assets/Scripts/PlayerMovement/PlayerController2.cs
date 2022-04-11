@@ -18,14 +18,10 @@ public class PlayerController2 : MonoBehaviour
     [Header("Sprint")]
     [SerializeField] private float sprintSpeed = 200f;
     [SerializeField] private float maxSpeed = 16f;
-    [SerializeField] private float sprintMultiplier = 10f;
-    [SerializeField] private float airMultiplier = 0.4f;
-
+    
     [Header("Jump")]
     [SerializeField] private float maxHandSpeed;
     [SerializeField] private float jumpVelocity = 5f;
-    [SerializeField] private float fallMultiplier = 2.5f;
-    [SerializeField] private float lowJumpMultiplier = 2f;
     
     [Header("Drag")] 
     [SerializeField] private float groundDrag = 6f;
@@ -45,6 +41,8 @@ public class PlayerController2 : MonoBehaviour
     private CapsuleCollider col;
     private Transform cameraTransform;
     private Rigidbody rb;
+    private float exitTime;
+    private Collider lastCollider;
 
     private float AverageHandSpeed => handVelocityArray.Average();
     
@@ -115,13 +113,29 @@ public class PlayerController2 : MonoBehaviour
             Jump();
     }
 
+    public void OnPlayerFall() {
+        var spawnPoint = lastCollider.bounds.center;
+        spawnPoint.y += lastCollider.bounds.extents.y + 0.2f;
+        
+        transform.position = spawnPoint;
+    }
+    
     private void OnTriggerEnter(Collider other) {
-        if (other.CompareTag(Tags.InteractableArea))
+        if (other.CompareTag(Tags.InteractableArea) && Time.time > exitTime + 0.2f) {
+            print("enter");
             onAreaEnter.Raise(true);
+        }
     }
     
     private void OnTriggerExit(Collider other) {
-        if (other.CompareTag(Tags.InteractableArea))
+        if (other.CompareTag(Tags.InteractableArea)) {
+            print("exit");
             onAreaEnter.Raise(false);
+            exitTime = Time.time;
+        }
+    }
+
+    private void OnCollisionEnter(Collision collision) {
+        lastCollider = collision.collider;
     }
 }
