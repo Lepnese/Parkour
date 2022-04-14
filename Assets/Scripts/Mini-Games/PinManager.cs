@@ -15,14 +15,10 @@ public class PinManager : MonoBehaviour
     void Start()
     {
 
-        scoreText.text = "Votre score: " + scoreText.ToString();
+        scoreText.text = "Votre score : " + scoreText.ToString();
         pin = GetComponent<Pin>();
     }
-    //private void Update()
-    //{
-    //    time += Time.deltaTime;
-    //}
-
+ 
     public void OnKnocked()
     {
         knockedPins++;
@@ -37,6 +33,6 @@ public class PinManager : MonoBehaviour
             //scoreText.text = "Strike!!!";
             //faudrait checker les 10 pins pis prendre la valeur max pis la valeur min
             else
-                scoreText.text = "Votre score" + knockedPins;
+                scoreText.text = "Votre score : " + knockedPins;
     }
 }

@@ -4,15 +4,19 @@ using UnityEngine;
 
 public class ResetPin : MonoBehaviour
 {
-    // Start is called before the first frame update
+    //[SerializeField] private VoidEvent OnPressedEvent;
+    Pin pin;
+    Vector3 PositionAtStart;
     void Start()
     {
-        
+        pin = GetComponent<Pin>();
+        PositionAtStart = pin.transform.position;
     }
-
-    // Update is called once per frame
-    void Update()
+    void OnTriggerEnter(Collider other)
     {
-        
+        if (other.CompareTag("Player"))
+        {
+            pin.transform.position = PositionAtStart;
+        }
     }
 }

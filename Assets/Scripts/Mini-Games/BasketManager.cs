@@ -1,18 +1,22 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
 
 public class BasketManager : MonoBehaviour
 {
-    // Start is called before the first frame update
+
+    public TMP_Text scoreText;
+    int score = 0;
+
     void Start()
     {
-        
+        scoreText.text = "Votre score : " + scoreText.ToString();
     }
 
-    // Update is called once per frame
-    void Update()
+    public void OnScored()
     {
-        
+        score++;
+        scoreText.text = "Votre score : " + score;
     }
 }

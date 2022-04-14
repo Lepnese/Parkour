@@ -21,7 +21,6 @@ public class Pin : MonoBehaviour
             yield return null;
         }
         OnKnockedEvent.Raise();
-        time = Time.time;
     }
 
 }
