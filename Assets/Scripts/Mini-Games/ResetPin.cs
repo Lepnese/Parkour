@@ -1,22 +1,27 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class ResetPin : MonoBehaviour
 {
-    //[SerializeField] private VoidEvent OnPressedEvent;
-    Pin pin;
-    Vector3 PositionAtStart;
-    void Start()
-    {
-        pin = GetComponent<Pin>();
-        PositionAtStart = pin.transform.position;
+    [SerializeField] private Pin[] pins;
+
+    private bool isReset;
+    
+    private void OnTriggerEnter(Collider other) {
+        if (!other.CompareTag("ButtonPusher")) return;
+
+        if (!isReset)
+            ResetPins();
+    
+        isReset = true;
     }
-    void OnTriggerEnter(Collider other)
-    {
-        if (other.CompareTag("Player"))
-        {
-            pin.transform.position = PositionAtStart;
-        }
+
+    private void OnTriggerExit(Collider other) {
+        isReset = false;
+    }
+
+    private void ResetPins() {
+        foreach (var pin in pins) {
+            pin.Reset();
+        }        
     }
 }
