@@ -7,38 +7,36 @@ public class AudioManager : MonoBehaviour {
 
     [SerializeField] private Sound[] sounds;
 
-    private void Awake() {
+    private void Start ()
+    {
         if (instance != null) {
             Destroy(gameObject);
         }
         else {
             instance = this;
+            DontDestroyOnLoad(gameObject);
         }
+
+        foreach (Sound s in sounds) {
+            s.source = gameObject.AddComponent<AudioSource>();
+            s.source.clip = s.clip;
+            s.source.volume = s.volume;
+            s.source.pitch = s.pitch;
+            s.source.loop = s.loop;
+        }
+
+        gameObject.AddComponent<ONSPAudioSource>();
     }
 
-    public void Play (string sound, GameObject target) {
+    public void Play (string sound) {
         Sound s = Array.Find(sounds, item => item.name == sound);
-        s.source = CreateSource(s, target);
+        print(s.name);
         s.source.Play();
-    }
-
-    private AudioSource CreateSource(Sound s, GameObject target) {
-        var src = target.GetComponent<AudioSource>();
-        if (src) return src;
-        
-        src = target.AddComponent<AudioSource>();
-        
-        src.clip = s.clip;
-        src.volume = s.volume;
-        src.pitch = s.pitch;
-        src.loop = s.loop;
-        src.playOnAwake = false;
-
-        return src;
     }
 
     public void Stop(string sound) {
         Sound s = Array.Find(sounds, item => item.name == sound);
         s.source.Stop();
     }
+
 }
