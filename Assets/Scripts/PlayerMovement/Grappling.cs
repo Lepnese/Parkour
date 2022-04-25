@@ -34,6 +34,7 @@ public class Grappling : MonoBehaviour {
     // CETTE SECTION VIENT D'UNE SOURCE EXTÉRIEURE
     private void Update() {
         Debug.DrawLine(leftHand.transform.position, leftHand.transform.TransformDirection(Vector3.forward) * 100f);
+        Debug.DrawLine(rightHand.transform.position, rightHand.transform.TransformDirection(Vector3.forward) * 100f);
 
         grappleHand = GetGrappleHand();
         if (grappleHand && !joint) {

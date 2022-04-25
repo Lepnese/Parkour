@@ -31,10 +31,6 @@ public class HandPresence : MonoBehaviour
     public void OnFlatSurface(bool active) {
         isFlat = active;
         animator.SetBool(AnimatorFlatParam, active);
-
-        if (!active) return;
-        var angles = transform.eulerAngles;
-        transform.rotation = Quaternion.Euler(0, angles.y, -90);
     }
     
     public void OnEdge(bool active) {

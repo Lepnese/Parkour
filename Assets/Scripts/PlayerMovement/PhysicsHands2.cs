@@ -1,14 +1,16 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class PhysicsHands2 : MonoBehaviour
 {
-    public Collider col;
     [Header("Grappling")]
     [SerializeField] private Transform grappleSpawnPoint;
-    [Header("Climbing")]
+    [Header("Climbing")] 
+    [SerializeField] private float ledgeGrabTimeDelay = 0.5f;
     [SerializeField] private float minHeightFromTop = 0.3f;
+    [SerializeField] private Vector3 ledgeGrabRotation = new Vector3(282.059784f, 0, 192.092636f);
+    [SerializeField] private Transform indexFingerTip;
     [SerializeField] private PhysicsHandsEvent onClimbStart;
     [SerializeField] private PhysicsHandsEvent onClimbEnd;
     [Header("PID Movement Values")]
@@ -25,7 +27,7 @@ public class PhysicsHands2 : MonoBehaviour
     [SerializeField] private LayerMask collisionLayers;
     [Header("Player References")]
     [SerializeField] private Rigidbody playerRb;
-
+    
     private Rigidbody rb;
     private Transform targetTransform;
     private Vector3 previousPosition;
@@ -65,7 +67,7 @@ public class PhysicsHands2 : MonoBehaviour
 
         if (Vector3.Distance(transform.position, trackedHand.transform.position) > maxDistanceFromTrackedHand)
             transform.position = trackedHand.transform.position;
-        
+
         bool isCloseToObject = Physics.CheckSphere(pos, physicsRange, collisionLayers);
         if (isCloseToObject) {
             // Controller moves using PID (rigidbody motion)
@@ -80,25 +82,57 @@ public class PhysicsHands2 : MonoBehaviour
     }
 
     private void FixHandPosition() {
-        transform.position = grabPoint;
+        Quaternion rot;
         
-        if (IsGrabbingCorner(grabPoint))
+        if (IsGrabbingCorner(grabPoint)) {
+            grabPoint = GetClosestPointOnEdge(grabPoint);
+            rot = Quaternion.Euler(ledgeGrabRotation);
             handPresence.OnEdge(true);
-        else
+        } 
+        else {
+            rot = Quaternion.Euler(0, transform.eulerAngles.y, -90);
             handPresence.OnFlatSurface(true);
+        }
         
+        transform.position = grabPoint;
+        transform.rotation = rot;
         rb.constraints = RigidbodyConstraints.FreezeAll;
         canClimb = true;
         onClimbStart.Raise(this);
     }
 
-    private void OnDrawGizmos() {
-        var point = new Vector3(-0.5f, 13.64f, -0.3f);
-        Gizmos.DrawSphere(point, 0.02f);
+    private Vector3 GetClosestPointOnEdge(Vector3 point) {
+        var curBounds = currentLedge.bounds;
+        var gapToIndexFingerTip = indexFingerTip.position - transform.position;
+        var yMax = curBounds.center.y + curBounds.extents.y - gapToIndexFingerTip.y;
+        
+        // Vector 3 -- Point on edge
+        // float -- Y rotation associated with side of ledge
+        var edgePoints = new Dictionary<Vector3, float>
+        {
+            [new Vector3(curBounds.center.x + curBounds.extents.x, yMax, point.z)] = 0f,
+            [new Vector3(curBounds.center.x - curBounds.extents.x, yMax, point.z)] = 180f,
+            [new Vector3(point.x, yMax, curBounds.center.z + curBounds.extents.z)] = -90f,
+            [new Vector3(point.x, yMax, curBounds.center.z - curBounds.extents.z)] = 90f
+        };
+        
+        var minDistance = float.PositiveInfinity;
+        var closestPoint = Vector3.zero;
 
-        var edgePoint = point;
-        edgePoint.x = col.bounds.center.x - col.bounds.extents.x;
-        Gizmos.DrawSphere(edgePoint, 0.02f);
+        foreach (var pair in edgePoints) {
+            var edgePoint = pair.Key;
+            var yRotation = pair.Value;
+            
+            var dist = Vector3.Distance(point, edgePoint);
+            
+            if (dist > minDistance) continue;
+            
+            minDistance = dist;
+            closestPoint = edgePoint;
+            ledgeGrabRotation.y = yRotation;
+        }
+
+        return closestPoint;
     }
 
     // CETTE SECTION VIENT D'UNE SOURCE EXTÉRIEURE
@@ -189,11 +223,12 @@ public class PhysicsHands2 : MonoBehaviour
     private IEnumerator CheckForLedge() {
         var time = Time.time;
 
-        while (Time.time - time < 1f && trackedHand.GetHandButton(1)) {
+        while (Time.time - time < ledgeGrabTimeDelay && trackedHand.GetHandButton(1)) {
             if (currentLedge || fullyClimbable) {
                 closestCollider = FindClimbableCollider();
-                grabPoint = closestCollider.ClosestPoint(transform.position);
-        
+
+                grabPoint = GetClosestPoint();
+
                 if (Vector3.Distance(grabPoint, transform.position) > grabRange.radius) yield break;
                 if (closestCollider == currentLedge && !IsValidGrabPoint()) yield break;
 
@@ -201,6 +236,22 @@ public class PhysicsHands2 : MonoBehaviour
             }
             yield return null;
         }
+    }
+
+    private Vector3 GetClosestPoint() {
+        Vector3 point;
+        var meshCollider = closestCollider.GetComponent<MeshCollider>();
+        
+        if (!meshCollider) {
+            point = closestCollider.ClosestPoint(transform.position);
+            return point;
+        }
+        
+        meshCollider.convex = true;
+        point = closestCollider.ClosestPoint(transform.position);
+        meshCollider.convex = false;
+    
+        return point;
     }
 
     private Collider FindClimbableCollider() {
@@ -252,7 +303,7 @@ public class PhysicsHands2 : MonoBehaviour
 
     private void OnTriggerExit(Collider other) {
         var col = other.GetComponent<Collider>();
-        
+
         if (col == fullyClimbable) {
             fullyClimbable = null;
         }
