@@ -33,7 +33,8 @@ public class PhysicsHands2 : MonoBehaviour
     [SerializeField] private PhysicsHandsEvent onGripBtnUp;
     [SerializeField] private GameObject handModel;
     [SerializeField] private GameObject gun;
-    
+
+    private Camera cam;
     private Rigidbody rb;
     private Transform targetTransform;
     private Vector3 previousPosition;
@@ -43,14 +44,13 @@ public class PhysicsHands2 : MonoBehaviour
     private Collider closestCollider;
     private SphereCollider grabRange;
     private Vector3 grabPoint;
-    private PhysHandState state;
 
     private HandPresence handPresence;
     public Transform GrappleSpawnPoint => grappleSpawnPoint;
     public Hand TrackedHand { get; private set; }
 
     public GameObject AttachedGun => gun;
-    public PhysHandState State => state;
+    public PhysHandState State { get; private set; }
 
     private void Awake() {
         rb = GetComponent<Rigidbody>();
@@ -59,15 +59,16 @@ public class PhysicsHands2 : MonoBehaviour
     }
 
     private void Start() {
+        cam = Camera.main;
         SetTrackedHand();
         
         rb.maxAngularVelocity = float.PositiveInfinity;
         previousPosition = transform.position;
-        state = PhysHandState.Hand;
+        State = PhysHandState.Hand;
     }
 
     public void SetTrackedHand() {
-        TrackedHand = HandInteraction.Instance.GetTrackedHand(side);
+        TrackedHand = HandInteractionManager.Instance.GetTrackedHand(side);
         
         targetTransform = TrackedHand.transform;
         
@@ -296,18 +297,18 @@ public class PhysicsHands2 : MonoBehaviour
 
     public void OnGripBtnDown(Hand hand) {
         if (hand != TrackedHand) return;
-        if (!IsState(PhysHandState.Hand)) return;
-
         onGripBtnDown.Raise(this);
+
+        if (!IsState(PhysHandState.Hand)) return;
         StartCoroutine(CheckForLedge());
     }
     
     public void OnGripBtnUp(Hand hand) {
         if (hand != TrackedHand) return;
+        onGripBtnUp.Raise(this);
+
         if (!IsState(PhysHandState.Hand)) return;
 
-        onGripBtnUp.Raise(this);
-        
         canClimb = false;
         rb.constraints = RigidbodyConstraints.None;
         
@@ -328,7 +329,7 @@ public class PhysicsHands2 : MonoBehaviour
     }
 
     public void SetState(PhysHandState newState) {
-        state = newState;
+        State = newState;
     }
 
     private void OnTriggerExit(Collider other) {
@@ -345,7 +346,7 @@ public class PhysicsHands2 : MonoBehaviour
     private static bool IsNotClimbableLayer(GameObject obj)
         => obj.CompareTag(Tags.NotClimbable) || obj.CompareTag(Tags.Player) || obj.layer == LayerMask.NameToLayer("UI");
 
-    private bool IsState(PhysHandState checkState) => checkState == state;
+    private bool IsState(PhysHandState checkState) => checkState == State;
 
     #region Toggle Hand Model On/Off
     public void OnSelectEntered(float time) {
