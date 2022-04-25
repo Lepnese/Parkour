@@ -4,7 +4,7 @@ using UnityEngine;
 
 
 [RequireComponent(typeof(Animator))]
-public class GunEnnemie : MonoBehaviour
+public class Gun : MonoBehaviour
 {
     [SerializeField]
     private bool AddBulletSpread = true;
