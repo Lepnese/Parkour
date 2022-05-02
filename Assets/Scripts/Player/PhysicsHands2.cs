@@ -1,10 +1,13 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.XR.Interaction.Toolkit;
 
 public class PhysicsHands2 : MonoBehaviour
 {
+    [SerializeField] private LayerMask playerLayers;
+    [SerializeField] private Transform Point;
     [SerializeField] private ControllerSide side;
     [Header("Grappling")]
     [SerializeField] private Transform grappleSpawnPoint;
@@ -33,24 +36,23 @@ public class PhysicsHands2 : MonoBehaviour
     [SerializeField] private PhysicsHandsEvent onGripBtnUp;
     [SerializeField] private GameObject handModel;
     [SerializeField] private GameObject gun;
-    
+
+    private Camera cam;
     private Rigidbody rb;
     private Transform targetTransform;
     private Vector3 previousPosition;
     private bool canClimb;
     private Collider currentLedge;
-    private Collider fullyClimbable;
-    private Collider closestCollider;
     private SphereCollider grabRange;
     private Vector3 grabPoint;
-    private PhysHandState state;
-
+    private List<Collider> closeColliders;
     private HandPresence handPresence;
+    
     public Transform GrappleSpawnPoint => grappleSpawnPoint;
     public Hand TrackedHand { get; private set; }
 
     public GameObject AttachedGun => gun;
-    public PhysHandState State => state;
+    public PhysHandState State { get; private set; }
 
     private void Awake() {
         rb = GetComponent<Rigidbody>();
@@ -59,15 +61,17 @@ public class PhysicsHands2 : MonoBehaviour
     }
 
     private void Start() {
+        cam = Camera.main;
         SetTrackedHand();
         
         rb.maxAngularVelocity = float.PositiveInfinity;
         previousPosition = transform.position;
-        state = PhysHandState.Hand;
+        State = PhysHandState.Hand;
+        closeColliders = new List<Collider>();
     }
 
     public void SetTrackedHand() {
-        TrackedHand = HandInteraction.Instance.GetTrackedHand(side);
+        TrackedHand = HandInteractionManager.Instance.GetTrackedHand(side);
         
         targetTransform = TrackedHand.transform;
         
@@ -76,8 +80,9 @@ public class PhysicsHands2 : MonoBehaviour
     }
 
     private void Update() {
+        currentLedge = FindClosestLedge();
+
         var pos = transform.position;
-        
         if (TrackedHand.GetHandButton(1) && canClimb) {
             Climb();
             return;
@@ -237,77 +242,61 @@ public class PhysicsHands2 : MonoBehaviour
         var time = Time.time;
 
         while (Time.time - time < ledgeGrabTimeDelay && TrackedHand.GetHandButton(1)) {
-            if (currentLedge || fullyClimbable) {
-                closestCollider = FindClimbableCollider();
-                
-                if (closestCollider.GetComponent<XRGrabInteractable>() != null)
-                    yield break;
+            while (!currentLedge) yield return null;
 
-                grabPoint = GetClosestPoint();
+            // le joueur ne doit pas grimper sur un objet qu'il peut attraper
+            if (currentLedge.GetComponent<XRGrabInteractable>() != null)
+                yield break;
 
-                if (Vector3.Distance(grabPoint, transform.position) > grabRange.radius) yield break;
-                if (closestCollider == currentLedge && !IsValidGrabPoint()) yield break;
+            grabPoint = GetClosestPoint();
 
+            if (Vector3.Distance(grabPoint, transform.position) > grabRange.radius) yield break;
+            if (!currentLedge.CompareTag(Tags.Climbable) && !IsValidGrabPoint(grabPoint, currentLedge)) yield break;
+
+            if (IsValidGrabPoint(grabPoint, currentLedge))
                 FixHandPosition();
-            }
+                
             yield return null;
         }
     }
 
     private Vector3 GetClosestPoint() {
-        Vector3 point;
-        var meshCollider = closestCollider.GetComponent<MeshCollider>();
+        var meshCollider = currentLedge.GetComponent<MeshCollider>();
         
-        if (!meshCollider) {
-            point = closestCollider.ClosestPoint(transform.position);
-            return point;
+        if (!meshCollider || meshCollider.convex) {
+            return currentLedge.ClosestPoint(transform.position);
         }
-        
+
         meshCollider.convex = true;
-        point = closestCollider.ClosestPoint(transform.position);
+        var point = currentLedge.ClosestPoint(transform.position);
         meshCollider.convex = false;
-    
+
         return point;
     }
-
-    private Collider FindClimbableCollider() {
-        if (currentLedge && fullyClimbable)
-            return GetClosestCollider(transform.position, currentLedge, fullyClimbable);
-        
-        return currentLedge ? currentLedge : fullyClimbable;
-    }
-
-    private static Collider GetClosestCollider(Vector3 pos, Collider currentLedge, Collider fullyClimbable) {
-        var ledgePoint = currentLedge.ClosestPoint(pos);
-        var climbablePoint = fullyClimbable.ClosestPoint(pos);
-        
-        var ledgeDist = Vector3.Distance(pos, ledgePoint);
-        var climbableDist = Vector3.Distance(pos, climbablePoint);
-
-        return ledgeDist < climbableDist ? currentLedge : fullyClimbable;
-    }
     
-    private bool IsValidGrabPoint() {
-        var bounds = currentLedge.bounds;
-        var validHeight = bounds.center.y + bounds.extents.y - minHeightFromTop;
-
-        return grabPoint.y >= validHeight;
+    private bool IsValidGrabPoint(Vector3 point, Collider ledge) {
+        var dir = (point - transform.position).normalized;
+        if (Physics.Raycast(transform.position, dir, out RaycastHit hit, 5f, ~playerLayers)) {
+            return hit.normal.y > 0f;
+        }
+        
+        return grabPoint.y >= ledge.bounds.max.y - minHeightFromTop;
     }
 
     public void OnGripBtnDown(Hand hand) {
         if (hand != TrackedHand) return;
-        if (!IsState(PhysHandState.Hand)) return;
-
         onGripBtnDown.Raise(this);
+
+        if (!IsState(PhysHandState.Hand)) return;
         StartCoroutine(CheckForLedge());
     }
     
     public void OnGripBtnUp(Hand hand) {
         if (hand != TrackedHand) return;
+        onGripBtnUp.Raise(this);
+
         if (!IsState(PhysHandState.Hand)) return;
 
-        onGripBtnUp.Raise(this);
-        
         canClimb = false;
         rb.constraints = RigidbodyConstraints.None;
         
@@ -318,34 +307,30 @@ public class PhysicsHands2 : MonoBehaviour
 
     private void OnTriggerEnter(Collider other) {
         if (IsNotClimbableLayer(other.gameObject)) return;
-
-        if (other.CompareTag(Tags.Climbable)) {
-            fullyClimbable = other.GetComponent<Collider>();
-            return;
-        }
         
-        currentLedge = other.GetComponent<Collider>();
+        closeColliders.AddRange(other.GetComponents<Collider>());
     }
 
+    private Collider FindClosestLedge() {
+        if (closeColliders.Count == 0) return null;
+        
+        var handPos = transform.position;
+        return closeColliders.OrderBy(x => Vector3.Distance(handPos, x.ClosestPoint(handPos))).First();
+    }
+    
     public void SetState(PhysHandState newState) {
-        state = newState;
+        State = newState;
     }
 
     private void OnTriggerExit(Collider other) {
-        var col = other.GetComponent<Collider>();
-
-        if (col == fullyClimbable) {
-            fullyClimbable = null;
-        }
-        else if (col == currentLedge) {
-            currentLedge = null;
-        }
+        var handPos = transform.position;
+        closeColliders.RemoveAll(x => Vector3.Distance(handPos, x.ClosestPoint(handPos)) > grabRange.radius);
     }
 
     private static bool IsNotClimbableLayer(GameObject obj)
         => obj.CompareTag(Tags.NotClimbable) || obj.CompareTag(Tags.Player) || obj.layer == LayerMask.NameToLayer("UI");
 
-    private bool IsState(PhysHandState checkState) => checkState == state;
+    private bool IsState(PhysHandState checkState) => checkState == State;
 
     #region Toggle Hand Model On/Off
     public void OnSelectEntered(float time) {

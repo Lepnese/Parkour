@@ -1,4 +1,5 @@
 using UnityEngine;
+
 public class Gun : MonoBehaviour
 {
     [SerializeField] private float damageAmount = 50f;
@@ -8,33 +9,52 @@ public class Gun : MonoBehaviour
     [SerializeField] private GameObject impactEffect;
     [SerializeField] private GunInteraction gunInteraction;
 
+    private bool rayFromBullet;
+    private RaycastHit rayHit;
+    
     public void OnTriggerBtnDown(Hand hand) {
         if (hand != gunInteraction.CurrentHand) return;
         
-        if (gunInteraction.CurrentAmmo > 0)
+        if (gunInteraction.AmmoCount > 0)
             Fire();
     }
 
     private void Fire() {
-        AudioManager.instance.Play("GunShot");
-        
+        AudioManager.instance.Play("GunShot", gameObject);
+
         muzzleFlash.Play();
         gunInteraction.ReduceAmmo();
-        if(Physics.Raycast(bulletSpawn.position, bulletSpawn.forward, out var hit)) {
-            if(hit.rigidbody != null) {
-                hit.rigidbody.AddForce(-hit.normal * impactForce);
-            }
+        
+        if (!rayFromBullet) return;
+        if (rayHit.transform.CompareTag(Tags.Player)) return;
 
-            var enemy = hit.transform.GetComponent<Enemy>();
-            if(enemy != null) {
-                enemy.TakeDamage(damageAmount);
-                return;
-            }
-
-            Quaternion impactRotation = Quaternion.LookRotation(hit.normal);
-            GameObject impact = Instantiate(impactEffect, hit.point, impactRotation);
-            impact.transform.parent = hit.transform;
-            Destroy(impact, 5);
+        if (rayHit.rigidbody != null) {
+            rayHit.rigidbody.AddForce(-rayHit.normal * impactForce);
         }
+
+        var enemy = rayHit.transform.GetComponent<Enemy>();
+        if (enemy != null) {
+            enemy.TakeDamage(damageAmount);
+            return;
+        }
+
+        Quaternion impactRotation = Quaternion.LookRotation(rayHit.normal);
+        GameObject impact = Instantiate(impactEffect, rayHit.point, impactRotation);
+        impact.transform.parent = rayHit.transform;
+        Destroy(impact, 5);
+    }
+
+    private void Update() {
+        rayFromBullet = Physics.Raycast(bulletSpawn.position, bulletSpawn.forward, out rayHit);
+        CheckForReload();
+    }
+
+    private void CheckForReload() {
+        if (!rayFromBullet) return;
+        if(rayHit.normal != Vector3.up) return;
+        
+        float dot = Vector3.Dot(bulletSpawn.forward, rayHit.normal);
+        if (Mathf.Abs(dot) > 0.9f)
+            gunInteraction.Reload();
     }
 }

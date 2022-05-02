@@ -1,15 +1,17 @@
+using TMPro;
 using UnityEngine;
 
 public class GunInteraction : MonoBehaviour
 {
+    [SerializeField] private TMP_Text watchAmmoCount;
     [SerializeField] private float magCapacity = 16f;
     
     private Camera cam;
     private PhysicsHands2 currentHand;
     private GameObject gun;
 
-    private float currentAmmo;
-    public float CurrentAmmo => currentAmmo;
+    public float AmmoCount { get; private set; }
+
     public Hand CurrentHand => currentHand.TrackedHand;
     
     private void Awake() {
@@ -17,11 +19,13 @@ public class GunInteraction : MonoBehaviour
     }
 
     private void Start() {
-        currentAmmo = magCapacity;
+        AmmoCount = magCapacity;
+        UpdateWatchText();
     }
 
     public void OnGripBtnDown(PhysicsHands2 hand) {
-        if (currentHand || HandInFOV(hand)) return;
+        if (currentHand) return;
+        if (HandInFOV(hand)) return;
 
         currentHand = hand;
         gun = hand.AttachedGun;
@@ -36,7 +40,7 @@ public class GunInteraction : MonoBehaviour
 
     public void OnGripBtnUp(PhysicsHands2 hand) {
         if (hand != currentHand) return;
-
+        
         ToggleGunActive(false);
         currentHand = null;
     }
@@ -49,6 +53,16 @@ public class GunInteraction : MonoBehaviour
     }
 
     public void ReduceAmmo() {
-        currentAmmo--;
+        AmmoCount--;
+        UpdateWatchText();
+    }
+
+    public void Reload() {
+        AmmoCount = magCapacity;
+        UpdateWatchText();
+    }
+    
+    private void UpdateWatchText() {
+        watchAmmoCount.text = $"{AmmoCount}/{magCapacity}";
     }
 }

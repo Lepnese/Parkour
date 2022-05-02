@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class HandInteraction : MonoBehaviour
+public class HandInteractionManager : MonoBehaviour
 {
     [SerializeField] private InteractorMode interactorStartMode;
     [SerializeField] private VoidEvent onInteractorChange;
@@ -18,12 +18,12 @@ public class HandInteraction : MonoBehaviour
     private Hand rightTrackedHand;
 
     #region Singleton
-        private static HandInteraction _instance;
-        public static HandInteraction Instance
+        private static HandInteractionManager _instance;
+        public static HandInteractionManager Instance
         {
             get {
                 if(_instance == null) {
-                    _instance = FindObjectOfType<HandInteraction>();
+                    _instance = FindObjectOfType<HandInteractionManager>();
                 }
                 return _instance;
             }

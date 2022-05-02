@@ -39,8 +39,8 @@ public class Grappling : MonoBehaviour {
 
     // Checks which hand is pressing both trigger and grip buttons
     private PhysicsHands2 GetGrappleHand() {
-        var left = HandInteraction.Instance.GetTrackedHand(ControllerSide.Left);
-        var right = HandInteraction.Instance.GetTrackedHand(ControllerSide.Right);
+        var left = HandInteractionManager.Instance.GetTrackedHand(ControllerSide.Left);
+        var right = HandInteractionManager.Instance.GetTrackedHand(ControllerSide.Right);
         
         if (leftHandPhysics.State == PhysHandState.Hand) {
             if (left.GetHandButton(0) && left.GetHandButton(1))
