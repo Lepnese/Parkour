@@ -11,7 +11,6 @@ GameObject:
   - component: {fileID: 585996692368364702}
   - component: {fileID: 585996692368364690}
   - component: {fileID: 585996692368364691}
-  - component: {fileID: 585996692368364688}
   - component: {fileID: 585996692368364689}
   m_Layer: 11
   m_Name: RightHand Controller Direct
@@ -27,12 +26,12 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 585996692368364703}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
-  m_Father: {fileID: 3521747391322719358}
-  m_RootOrder: 5
+  m_Father: {fileID: 4322499631795306000}
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &585996692368364690
 MonoBehaviour:
@@ -278,29 +277,6 @@ MonoBehaviour:
   m_PlayHapticsOnHoverCanceled: 0
   m_HapticHoverCancelIntensity: 0
   m_HapticHoverCancelDuration: 0
---- !u!114 &585996692368364688
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 585996692368364703}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8536d3a866c93084a887a16d05a90e5b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  handName: 1
-  onGripBtnDown: {fileID: 11400000, guid: d3d6f7c580efc6c45b11d770b2709b71, type: 2}
-  onGripBtnUp: {fileID: 11400000, guid: 9babd9acfa4a0484497675ce41b46f6b, type: 2}
-  onJumpBtnDown: {fileID: 11400000, guid: 638d6e7c2a485c4418cefd0df9957181, type: 2}
-  onJumpBtnUp: {fileID: 11400000, guid: a3e47b8c95af8804db3620414205306d, type: 2}
-  velocityReference: {fileID: -1409920075211750743, guid: c348712bda248c246b8c49b3db54643f, type: 3}
-  gripReference: {fileID: -1758520528963094988, guid: c348712bda248c246b8c49b3db54643f, type: 3}
-  triggerReference: {fileID: 7904272356298805229, guid: c348712bda248c246b8c49b3db54643f, type: 3}
-  gripPressedReference: {fileID: 187161793506945269, guid: c348712bda248c246b8c49b3db54643f, type: 3}
-  triggerPressedReference: {fileID: 83097790271614945, guid: c348712bda248c246b8c49b3db54643f, type: 3}
-  jumpBtnPressedReference: {fileID: 7393297889388296884, guid: c348712bda248c246b8c49b3db54643f, type: 3}
 --- !u!135 &585996692368364689
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -324,7 +300,6 @@ GameObject:
   m_Component:
   - component: {fileID: 585996693902107476}
   - component: {fileID: 585996693902107464}
-  - component: {fileID: 585996693902107465}
   - component: {fileID: 585996693902107478}
   - component: {fileID: 585996693902107479}
   m_Layer: 11
@@ -341,12 +316,12 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 585996693902107477}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
-  m_Father: {fileID: 3521747391322719358}
-  m_RootOrder: 3
+  m_Father: {fileID: 5518379812293701216}
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &585996693902107464
 MonoBehaviour:
@@ -514,29 +489,6 @@ MonoBehaviour:
       m_Flags: 0
     m_Reference: {fileID: 7779212132400271959, guid: c348712bda248c246b8c49b3db54643f, type: 3}
   m_ButtonPressPoint: 0.5
---- !u!114 &585996693902107465
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 585996693902107477}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8536d3a866c93084a887a16d05a90e5b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  handName: 0
-  onGripBtnDown: {fileID: 11400000, guid: d3d6f7c580efc6c45b11d770b2709b71, type: 2}
-  onGripBtnUp: {fileID: 11400000, guid: 9babd9acfa4a0484497675ce41b46f6b, type: 2}
-  onJumpBtnDown: {fileID: 11400000, guid: 638d6e7c2a485c4418cefd0df9957181, type: 2}
-  onJumpBtnUp: {fileID: 11400000, guid: a3e47b8c95af8804db3620414205306d, type: 2}
-  velocityReference: {fileID: -4364145909647615195, guid: c348712bda248c246b8c49b3db54643f, type: 3}
-  gripReference: {fileID: 6558622148059887818, guid: c348712bda248c246b8c49b3db54643f, type: 3}
-  triggerReference: {fileID: -4289430672226363583, guid: c348712bda248c246b8c49b3db54643f, type: 3}
-  gripPressedReference: {fileID: -6131295136447488360, guid: c348712bda248c246b8c49b3db54643f, type: 3}
-  triggerPressedReference: {fileID: -5982496924579745919, guid: c348712bda248c246b8c49b3db54643f, type: 3}
-  jumpBtnPressedReference: {fileID: 7393297889388296884, guid: c348712bda248c246b8c49b3db54643f, type: 3}
 --- !u!114 &585996693902107478
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -669,7 +621,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 585996694186000673}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9a88d1f6a136531498dcb3ae53eeb244, type: 3}
+  m_Script: {fileID: 11500000, guid: cc040d2cbaf72114188c8f772336f265, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   leftHandRay: {fileID: 3521747390833712041}
@@ -817,7 +769,6 @@ GameObject:
   - component: {fileID: 3521747390270214429}
   - component: {fileID: 3521747390270214428}
   - component: {fileID: 3521747390270214427}
-  - component: {fileID: 3521747390270214431}
   m_Layer: 11
   m_Name: RightHand Controller Ray
   m_TagString: Player
@@ -832,12 +783,12 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3521747390270214425}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
-  m_Father: {fileID: 3521747391322719358}
-  m_RootOrder: 4
+  m_Father: {fileID: 4322499631795306000}
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &3521747390270214430
 MonoBehaviour:
@@ -1321,29 +1272,6 @@ MonoBehaviour:
   m_SnapThresholdDistance: 10
   m_Reticle: {fileID: 0}
   m_StopLineAtFirstRaycastHit: 1
---- !u!114 &3521747390270214431
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3521747390270214425}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8536d3a866c93084a887a16d05a90e5b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  handName: 1
-  onGripBtnDown: {fileID: 11400000, guid: d3d6f7c580efc6c45b11d770b2709b71, type: 2}
-  onGripBtnUp: {fileID: 11400000, guid: 9babd9acfa4a0484497675ce41b46f6b, type: 2}
-  onJumpBtnDown: {fileID: 11400000, guid: 638d6e7c2a485c4418cefd0df9957181, type: 2}
-  onJumpBtnUp: {fileID: 11400000, guid: a3e47b8c95af8804db3620414205306d, type: 2}
-  velocityReference: {fileID: -1409920075211750743, guid: c348712bda248c246b8c49b3db54643f, type: 3}
-  gripReference: {fileID: -1758520528963094988, guid: c348712bda248c246b8c49b3db54643f, type: 3}
-  triggerReference: {fileID: 7904272356298805229, guid: c348712bda248c246b8c49b3db54643f, type: 3}
-  gripPressedReference: {fileID: 187161793506945269, guid: c348712bda248c246b8c49b3db54643f, type: 3}
-  triggerPressedReference: {fileID: 83097790271614945, guid: c348712bda248c246b8c49b3db54643f, type: 3}
-  jumpBtnPressedReference: {fileID: 7393297889388296884, guid: c348712bda248c246b8c49b3db54643f, type: 3}
 --- !u!1 &3521747390424290801
 GameObject:
   m_ObjectHideFlags: 0
@@ -1423,7 +1351,7 @@ MonoBehaviour:
   damping: 1
   rotFrequency: 100
   rotDamping: 0.9
-  trackedHand: {fileID: 3521747390833712047}
+  trackedHand: {fileID: 0}
   maxDistanceFromTrackedHand: 1
   physicsRange: 0.15
   climbForce: 500
@@ -1432,6 +1360,10 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 5495
   playerRb: {fileID: 3521747391164961303}
+  onGripBtnDown: {fileID: 0}
+  onGripBtnUp: {fileID: 0}
+  handModel: {fileID: 0}
+  gun: {fileID: 0}
 --- !u!120 &3521747390424290807
 LineRenderer:
   m_ObjectHideFlags: 0
@@ -1556,7 +1488,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   controller: {fileID: 3521747390833712046}
-  hand: {fileID: 3521747390833712047}
+  hand: {fileID: 0}
   animator: {fileID: 6670631297488861895}
 --- !u!114 &3521747390424312330
 MonoBehaviour:
@@ -1725,7 +1657,7 @@ MonoBehaviour:
   damping: 1
   rotFrequency: 100
   rotDamping: 0.9
-  trackedHand: {fileID: 3521747390270214431}
+  trackedHand: {fileID: 0}
   maxDistanceFromTrackedHand: 2
   physicsRange: 0.15
   climbForce: 500
@@ -1734,6 +1666,10 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 5495
   playerRb: {fileID: 3521747391164961303}
+  onGripBtnDown: {fileID: 0}
+  onGripBtnUp: {fileID: 0}
+  handModel: {fileID: 0}
+  gun: {fileID: 0}
 --- !u!120 &3521747390484721149
 LineRenderer:
   m_ObjectHideFlags: 0
@@ -1858,7 +1794,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   controller: {fileID: 3521747390270214430}
-  hand: {fileID: 3521747390270214431}
+  hand: {fileID: 0}
   animator: {fileID: 4409211281990833935}
 --- !u!114 &3521747390484721136
 MonoBehaviour:
@@ -1929,7 +1865,6 @@ GameObject:
   - component: {fileID: 3521747390833712045}
   - component: {fileID: 3521747390833712044}
   - component: {fileID: 3521747390833712043}
-  - component: {fileID: 3521747390833712047}
   m_Layer: 11
   m_Name: LeftHand Controller Ray
   m_TagString: Player
@@ -1944,12 +1879,12 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3521747390833712041}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
-  m_Father: {fileID: 3521747391322719358}
-  m_RootOrder: 2
+  m_Father: {fileID: 5518379812293701216}
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &3521747390833712046
 MonoBehaviour:
@@ -2433,29 +2368,6 @@ MonoBehaviour:
   m_SnapThresholdDistance: 10
   m_Reticle: {fileID: 0}
   m_StopLineAtFirstRaycastHit: 1
---- !u!114 &3521747390833712047
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3521747390833712041}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8536d3a866c93084a887a16d05a90e5b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  handName: 0
-  onGripBtnDown: {fileID: 11400000, guid: d3d6f7c580efc6c45b11d770b2709b71, type: 2}
-  onGripBtnUp: {fileID: 11400000, guid: 9babd9acfa4a0484497675ce41b46f6b, type: 2}
-  onJumpBtnDown: {fileID: 11400000, guid: 638d6e7c2a485c4418cefd0df9957181, type: 2}
-  onJumpBtnUp: {fileID: 11400000, guid: a3e47b8c95af8804db3620414205306d, type: 2}
-  velocityReference: {fileID: -4364145909647615195, guid: c348712bda248c246b8c49b3db54643f, type: 3}
-  gripReference: {fileID: 6558622148059887818, guid: c348712bda248c246b8c49b3db54643f, type: 3}
-  triggerReference: {fileID: -4289430672226363583, guid: c348712bda248c246b8c49b3db54643f, type: 3}
-  gripPressedReference: {fileID: -6131295136447488360, guid: c348712bda248c246b8c49b3db54643f, type: 3}
-  triggerPressedReference: {fileID: -5982496924579745919, guid: c348712bda248c246b8c49b3db54643f, type: 3}
-  jumpBtnPressedReference: {fileID: 7393297889388296884, guid: c348712bda248c246b8c49b3db54643f, type: 3}
 --- !u!1 &3521747390842425234
 GameObject:
   m_ObjectHideFlags: 0
@@ -3366,13 +3278,69 @@ Transform:
   m_Children:
   - {fileID: 3521747390999948658}
   - {fileID: 585996694186000672}
-  - {fileID: 3521747390833712042}
-  - {fileID: 585996693902107476}
-  - {fileID: 3521747390270214426}
-  - {fileID: 585996692368364702}
+  - {fileID: 5518379812293701216}
+  - {fileID: 4322499631795306000}
   m_Father: {fileID: 3521747391164961297}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &3862636986333949321
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5518379812293701216}
+  - component: {fileID: 8950049382759733332}
+  m_Layer: 11
+  m_Name: LeftHand
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5518379812293701216
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3862636986333949321}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children:
+  - {fileID: 3521747390833712042}
+  - {fileID: 585996693902107476}
+  m_Father: {fileID: 3521747391322719358}
+  m_RootOrder: 2
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &8950049382759733332
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3862636986333949321}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8536d3a866c93084a887a16d05a90e5b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  handName: 0
+  onGripBtnDown: {fileID: 11400000, guid: d3d6f7c580efc6c45b11d770b2709b71, type: 2}
+  onGripBtnUp: {fileID: 11400000, guid: 9babd9acfa4a0484497675ce41b46f6b, type: 2}
+  onTriggerBtnDown: {fileID: 0}
+  onTriggerBtnUp: {fileID: 0}
+  onJumpBtnDown: {fileID: 11400000, guid: 638d6e7c2a485c4418cefd0df9957181, type: 2}
+  onJumpBtnUp: {fileID: 11400000, guid: a3e47b8c95af8804db3620414205306d, type: 2}
+  velocityReference: {fileID: -4364145909647615195, guid: c348712bda248c246b8c49b3db54643f, type: 3}
+  gripReference: {fileID: 6558622148059887818, guid: c348712bda248c246b8c49b3db54643f, type: 3}
+  triggerReference: {fileID: -4289430672226363583, guid: c348712bda248c246b8c49b3db54643f, type: 3}
+  gripPressedReference: {fileID: -6131295136447488360, guid: c348712bda248c246b8c49b3db54643f, type: 3}
+  triggerPressedReference: {fileID: -5982496924579745919, guid: c348712bda248c246b8c49b3db54643f, type: 3}
+  jumpBtnPressedReference: {fileID: 7393297889388296884, guid: c348712bda248c246b8c49b3db54643f, type: 3}
 --- !u!1 &4350814652846048277
 GameObject:
   m_ObjectHideFlags: 0
@@ -7545,3 +7513,61 @@ Transform:
   m_Father: {fileID: 6758874847244723855}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &6926806111368517631
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4322499631795306000}
+  - component: {fileID: 1226851452894958805}
+  m_Layer: 11
+  m_Name: RightHand
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4322499631795306000
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6926806111368517631}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children:
+  - {fileID: 3521747390270214426}
+  - {fileID: 585996692368364702}
+  m_Father: {fileID: 3521747391322719358}
+  m_RootOrder: 3
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1226851452894958805
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6926806111368517631}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8536d3a866c93084a887a16d05a90e5b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  handName: 1
+  onGripBtnDown: {fileID: 11400000, guid: d3d6f7c580efc6c45b11d770b2709b71, type: 2}
+  onGripBtnUp: {fileID: 11400000, guid: 9babd9acfa4a0484497675ce41b46f6b, type: 2}
+  onTriggerBtnDown: {fileID: 0}
+  onTriggerBtnUp: {fileID: 0}
+  onJumpBtnDown: {fileID: 11400000, guid: 638d6e7c2a485c4418cefd0df9957181, type: 2}
+  onJumpBtnUp: {fileID: 11400000, guid: a3e47b8c95af8804db3620414205306d, type: 2}
+  velocityReference: {fileID: -1409920075211750743, guid: c348712bda248c246b8c49b3db54643f, type: 3}
+  gripReference: {fileID: -1758520528963094988, guid: c348712bda248c246b8c49b3db54643f, type: 3}
+  triggerReference: {fileID: 7904272356298805229, guid: c348712bda248c246b8c49b3db54643f, type: 3}
+  gripPressedReference: {fileID: 187161793506945269, guid: c348712bda248c246b8c49b3db54643f, type: 3}
+  triggerPressedReference: {fileID: 83097790271614945, guid: c348712bda248c246b8c49b3db54643f, type: 3}
+  jumpBtnPressedReference: {fileID: 7393297889388296884, guid: c348712bda248c246b8c49b3db54643f, type: 3}
