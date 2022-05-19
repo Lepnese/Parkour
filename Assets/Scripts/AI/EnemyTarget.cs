@@ -3,8 +3,9 @@ using UnityEngine;
 public class EnemyTarget : MonoBehaviour
 {
     [SerializeField] private Transform target;
+    [SerializeField] private Transform targetCamera;
 
-    public Transform TargetTransform => target;
+    public Transform TargetTransform => targetCamera;
     public Health Health { get; private set; }
 
     private bool followTarget;
@@ -15,7 +16,7 @@ public class EnemyTarget : MonoBehaviour
 
     private void Update() {
         if (followTarget)
-            transform.position = target.position + Vector3.up * 1.2f; // plus haut sinon on vise les pieds
+            transform.position = targetCamera.position - Vector3.up * 0.2f; // plus bas sinon on vise directement dans les yeux
     }
 
     public void FollowTarget(bool active) => followTarget = active;

@@ -11,15 +11,13 @@
     }
 
     public void Update(AiAgent agent) {
-        if (!agent.Sensor.IsInSight(agent.PlayerTransform.gameObject) || agent.TargetHealth.IsDead()) {
+        if (!agent.Sensor.IsInSight(agent.PlayerTransform.position) || agent.TargetHealth.IsDead()) {
             agent.StateMachine.ChangeState(AiStateId.Idle);
         }
-        
-        UpdateFiring(agent);
     }
 
     private static void UpdateFiring(AiAgent agent) {
-        bool isInSight = agent.Sensor.IsInSight(agent.PlayerTransform.gameObject);
+        bool isInSight = agent.Sensor.IsInSight(agent.PlayerTransform.position);
         agent.Shooting.SetFiring(isInSight);
     }
 

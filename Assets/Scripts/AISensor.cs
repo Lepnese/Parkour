@@ -5,51 +5,22 @@ public class AISensor : MonoBehaviour
 {
     [SerializeField] private Transform eyes;
     [SerializeField] private Transform feet;
-    [SerializeField] private float distance = 10f;
+    [Range(0, 50)] [SerializeField] private float distance = 10f;
     [Range(0, 180)] [SerializeField] private float angle = 30f;
-    [SerializeField] private float height = 1f;
+    [Range(0, 15)] [SerializeField] private float height = 1f;
     [SerializeField] private Color meshColor = Color.red;
-    [SerializeField] private int scanFrequency = 30;
-    [SerializeField] private LayerMask layers;
     [SerializeField] private LayerMask occlusionLayers;
     [SerializeField] private List<GameObject> objects = new List<GameObject>();
 
-    private Collider[] colliders = new Collider[50];
     private Mesh mesh;
-    private int count;
-    private float scanInterval;
-    private float scanTimer;
 
-    private void Start() {
-        scanInterval = 1.0f / scanFrequency;
-    }
-
-    private void Update() {
-        scanTimer -= Time.deltaTime;
-        if (scanTimer < 0f) {
-            scanTimer += scanInterval;
-            Scan();
-        }
-    }
-
-    private void Scan() {
-        print(objects.Count);
-        count = Physics.OverlapSphereNonAlloc(transform.position, distance, colliders, layers,
-            QueryTriggerInteraction.Collide);
-        objects.Clear();
-        for (int i = 0; i < count; ++i) {
-            var obj = colliders[i].gameObject;
-            if (IsInFOV(obj))
-                objects.Add(obj);
-        }
-    }
-
-    private bool IsInFOV(GameObject obj) {
+    public bool IsInSight(Vector3 pos) {
         var origin = transform.position;
-        var dest = obj.transform.position;
+        var dest = pos;
         var dir = dest - origin;
 
         if (dir.y < 0 || dir.y > height) return false;
+        if (dir.sqrMagnitude > distance * distance) return false;
 
         dir.y = 0;
         var deltaAngle = Vector3.Angle(dir, transform.forward);
@@ -59,9 +30,7 @@ public class AISensor : MonoBehaviour
         Debug.DrawLine(origin, dest, Color.green);
         return !Physics.Linecast(origin, dest, occlusionLayers);
     }
-
-    public bool IsInSight(GameObject obj) => objects.Contains(obj);
-
+    
     private Mesh CreateWedgeMesh() {
         Mesh mesh = new Mesh();
 
@@ -144,18 +113,12 @@ public class AISensor : MonoBehaviour
 
     private void OnValidate() {
         mesh = CreateWedgeMesh();
-        scanInterval = 1.0f / scanFrequency;
     }
 
     private void OnDrawGizmos() {
         if (mesh) {
             Gizmos.color = meshColor;
             Gizmos.DrawMesh(mesh, transform.position, transform.rotation);
-        }
-        
-        Gizmos.DrawWireSphere(transform.position, distance);
-        for (int i = 0; i < count; i++) {
-            Gizmos.DrawSphere(colliders[i].transform.position, 0.2f);
         }
 
         Gizmos.color = Color.green;
