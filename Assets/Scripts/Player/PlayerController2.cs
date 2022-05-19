@@ -1,13 +1,9 @@
-using System;
 using UnityEngine;
 using System.Linq;
 using UnityEngine.XR.Interaction.Toolkit;
 
 public class PlayerController2 : MonoBehaviour
 {
-    [Header("Interactable Events")]
-    [SerializeField] private BoolEvent onAreaEnter;
-    
     [Header("Player")]
     [SerializeField] private GameObject leftHandObj;
     [SerializeField] private GameObject rightHandObj;
@@ -28,8 +24,6 @@ public class PlayerController2 : MonoBehaviour
     [SerializeField] private float airDrag = 2f;
 
     private int frameCounter;
-    private bool isGrounded;
-    private bool isJumpBtnDown;
 
     private float[] handVelocityArray;
     
@@ -41,9 +35,10 @@ public class PlayerController2 : MonoBehaviour
     private CapsuleCollider col;
     private Transform cameraTransform;
     private Rigidbody rb;
-    private float exitTime;
     private Collider lastCollider;
 
+    public bool IsGrounded { get; private set; }
+    public Rigidbody Rigidbody => rb;
     private float AverageHandSpeed => handVelocityArray.Average();
     
     private void Awake() {
@@ -61,18 +56,20 @@ public class PlayerController2 : MonoBehaviour
     private void Update() {
         frameCounter++;
 
-        isGrounded = Physics.Raycast(
-            cameraTransform.position,
-            Vector3.down, col.height + 0.05f, ~playerLayers);
+        // IsGrounded = Physics.Raycast(
+        //     cameraTransform.position,
+        //     Vector3.down, col.height + 0.05f, ~playerLayers);
 
-        forwardDirection = cameraTransform.TransformDirection(Vector3.forward).normalized;
+        IsGrounded = Mathf.Abs(rb.velocity.y) < 0.01f;
         
+        forwardDirection = cameraTransform.TransformDirection(Vector3.forward).normalized;
+
         TrackHandSpeed();
         ControlDrag();
     }
 
     private void FixedUpdate() {
-        if (!isGrounded) return;
+        if (!IsGrounded) return;
         if (!IsMovingForward()) return;
         Run();
         // ManageRun();
@@ -88,7 +85,7 @@ public class PlayerController2 : MonoBehaviour
     } 
 
     private void ControlDrag() {
-        rb.drag = isGrounded ? groundDrag : airDrag;
+        rb.drag = IsGrounded ? groundDrag : airDrag;
     }
 
     private void Run() {
@@ -107,7 +104,7 @@ public class PlayerController2 : MonoBehaviour
     private bool IsMovingForward() => moveProvider.leftHandMoveAction.action.ReadValue<Vector2>().y > 0f;
     
     public void OnJumpBtnUp() {
-        if (isGrounded)
+        if (IsGrounded)
             Jump();
     }
 
@@ -117,19 +114,6 @@ public class PlayerController2 : MonoBehaviour
 
         rb.velocity = Vector3.zero;
         transform.position = spawnPoint;
-    }
-    
-    private void OnTriggerEnter(Collider other) {
-        if (other.CompareTag(Tags.InteractableArea) && Time.time > exitTime + 0.2f) {
-            onAreaEnter.Raise(true);
-        }
-    }
-    
-    private void OnTriggerExit(Collider other) {
-        if (other.CompareTag(Tags.InteractableArea)) {
-            onAreaEnter.Raise(false);
-            exitTime = Time.time;
-        }
     }
 
     private void OnCollisionStay(Collision collision) {

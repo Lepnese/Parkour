@@ -758,6 +758,98 @@ MonoBehaviour:
   gripPressedReference: {fileID: 187161793506945269, guid: c348712bda248c246b8c49b3db54643f, type: 3}
   triggerPressedReference: {fileID: 83097790271614945, guid: c348712bda248c246b8c49b3db54643f, type: 3}
   jumpBtnPressedReference: {fileID: 7393297889388296884, guid: c348712bda248c246b8c49b3db54643f, type: 3}
+--- !u!114 &7083303996153307844
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2269293553145418029}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 719941af7d9f4ef4979e368294b37163, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  gameEvent: {fileID: 11400000, guid: b82eb38c42ec6a74786d06758bbc47ef, type: 2}
+  unityEventResponse:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 7083303996153307850}
+        m_TargetAssemblyTypeName: Gun, Assembly-CSharp
+        m_MethodName: OnTriggerBtnDown
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+--- !u!114 &7083303996153307850
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2269293553145418029}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a2c1bb900bf1adc47b8f7218feaffe29, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  damageAmount: 50
+  impactForce: 150
+  bulletSpawn: {fileID: 3992250710413711644}
+  muzzleFlash: {fileID: 7083303996693564376}
+  impactEffect: {fileID: 100002, guid: 957385c45b877e645a128e11a3efb2f9, type: 3}
+  gunInteraction: {fileID: 7083303996345619597}
+--- !u!114 &7083303996222113187
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2269293553214502468}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a2c1bb900bf1adc47b8f7218feaffe29, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  damageAmount: 50
+  impactForce: 150
+  bulletSpawn: {fileID: 3992250711155719797}
+  muzzleFlash: {fileID: 7083303996067421870}
+  impactEffect: {fileID: 100002, guid: 957385c45b877e645a128e11a3efb2f9, type: 3}
+  gunInteraction: {fileID: 7083303996345619597}
+--- !u!114 &7083303996222113213
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2269293553214502468}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 719941af7d9f4ef4979e368294b37163, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  gameEvent: {fileID: 11400000, guid: b82eb38c42ec6a74786d06758bbc47ef, type: 2}
+  unityEventResponse:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 7083303996222113187}
+        m_TargetAssemblyTypeName: Gun, Assembly-CSharp
+        m_MethodName: OnTriggerBtnDown
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &3736043268914297370
 GameObject:
   m_ObjectHideFlags: 0
@@ -1695,6 +1787,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   vaultForce: 1.5
   rayLength: 1
+  playerLayers:
+    serializedVersion: 2
+    m_Bits: 0
   moveProvider: {fileID: 3736043269366236344}
 --- !u!114 &3736043269672987725
 MonoBehaviour:
@@ -2899,6 +2994,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1be19e1416a9439896877756c82138a6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  playerLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  Point: {fileID: 0}
   side: 1
   grappleSpawnPoint: {fileID: 3736043269642245785}
   ledgeGrabTimeDelay: 0.5
@@ -3248,6 +3347,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1be19e1416a9439896877756c82138a6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  playerLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  Point: {fileID: 0}
   side: 0
   grappleSpawnPoint: {fileID: 3736043269873121279}
   ledgeGrabTimeDelay: 0.5
@@ -7797,98 +7900,6 @@ Transform:
   m_Father: {fileID: 6833543331857133034}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: -2.5300886e-14, y: -3.1158097e-14, z: -5.3870974}
---- !u!114 &7083303996153307850
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2269293553145418029}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a2c1bb900bf1adc47b8f7218feaffe29, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  damageAmount: 50
-  impactForce: 150
-  bulletSpawn: {fileID: 3992250710413711644}
-  muzzleFlash: {fileID: 7083303996693564376}
-  impactEffect: {fileID: 100002, guid: 957385c45b877e645a128e11a3efb2f9, type: 3}
-  gunInteraction: {fileID: 7083303996345619597}
---- !u!114 &7083303996153307844
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2269293553145418029}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 719941af7d9f4ef4979e368294b37163, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  gameEvent: {fileID: 11400000, guid: b82eb38c42ec6a74786d06758bbc47ef, type: 2}
-  unityEventResponse:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 7083303996153307850}
-        m_TargetAssemblyTypeName: Gun, Assembly-CSharp
-        m_MethodName: OnTriggerBtnDown
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
---- !u!114 &7083303996222113187
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2269293553214502468}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a2c1bb900bf1adc47b8f7218feaffe29, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  damageAmount: 50
-  impactForce: 150
-  bulletSpawn: {fileID: 3992250711155719797}
-  muzzleFlash: {fileID: 7083303996067421870}
-  impactEffect: {fileID: 100002, guid: 957385c45b877e645a128e11a3efb2f9, type: 3}
-  gunInteraction: {fileID: 7083303996345619597}
---- !u!114 &7083303996222113213
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2269293553214502468}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 719941af7d9f4ef4979e368294b37163, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  gameEvent: {fileID: 11400000, guid: b82eb38c42ec6a74786d06758bbc47ef, type: 2}
-  unityEventResponse:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 7083303996222113187}
-        m_TargetAssemblyTypeName: Gun, Assembly-CSharp
-        m_MethodName: OnTriggerBtnDown
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
 --- !u!1 &7144433513766529432
 GameObject:
   m_ObjectHideFlags: 0
@@ -8157,14 +8168,14 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 8536860816127027547, guid: f8eb6acefd2f8d6479d7177e152638c4, type: 3}
   m_PrefabInstance: {fileID: 7083303996222113189}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &2269293553214502468 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 9021507208151806945, guid: f8eb6acefd2f8d6479d7177e152638c4, type: 3}
-  m_PrefabInstance: {fileID: 7083303996222113189}
-  m_PrefabAsset: {fileID: 0}
 --- !u!4 &3992250711155719797 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 6137176669113301968, guid: f8eb6acefd2f8d6479d7177e152638c4, type: 3}
+  m_PrefabInstance: {fileID: 7083303996222113189}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &2269293553214502468 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 9021507208151806945, guid: f8eb6acefd2f8d6479d7177e152638c4, type: 3}
   m_PrefabInstance: {fileID: 7083303996222113189}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &7083303996679017496

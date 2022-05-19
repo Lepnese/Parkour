@@ -63,7 +63,7 @@ public class AIShooting : MonoBehaviour
     }
 
     private void Shoot() {
-        audioSource.Play();
+        // audioSource.Play();
         agent.Animator.SetBool(IsShooting, true);
         
         if (Physics.Raycast(aimTransform.position, aimTransform.forward, out var hit)) {

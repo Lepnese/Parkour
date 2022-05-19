@@ -50,14 +50,18 @@ public class ColliderFollow : MonoBehaviour
     private IEnumerator AdjustCollider() {
         float y = col.center.y;
         while (col.center.y > cameraCenter.y / 2f) {
-            y -= adjustmentSpeed/2f * Time.fixedDeltaTime;
+            y -= adjustmentSpeed / 2f * Time.fixedDeltaTime;
             col.center = new Vector3(col.center.x, y, col.center.z);
-
-            if (ColliderHeightBelowThreshold()) {
-                col.height += adjustmentSpeed * Time.fixedDeltaTime;
-            }
+            
             yield return null;
         }
+    }
+    
+    private IEnumerator AdjustHeight() {
+       while (ColliderHeightBelowThreshold()) { 
+           col.height += adjustmentSpeed * Time.fixedDeltaTime;
+           yield return null;
+       }
     }
 
     private void ResetCamera() {
@@ -75,7 +79,9 @@ public class ColliderFollow : MonoBehaviour
     public void SetIsClimbing(bool active) {
         isClimbing = active;
 
-        if (!active && ColliderHeightBelowThreshold())
+        if (!active && ColliderHeightBelowThreshold()) {
             StartCoroutine(AdjustCollider());
+            StartCoroutine(AdjustHeight());
+        }
     }
 }
