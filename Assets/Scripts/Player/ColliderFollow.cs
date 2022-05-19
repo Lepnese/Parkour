@@ -47,7 +47,12 @@ public class ColliderFollow : MonoBehaviour
         col.height = cameraHeight;
     }
 
-    private IEnumerator AdjustCollider() {
+    private void AdjustCollider() {
+        StartCoroutine(AdjustCenter());
+        StartCoroutine(AdjustHeight());
+    }
+
+    private IEnumerator AdjustCenter() {
         float y = col.center.y;
         while (col.center.y > cameraCenter.y / 2f) {
             y -= adjustmentSpeed / 2f * Time.fixedDeltaTime;
@@ -56,7 +61,7 @@ public class ColliderFollow : MonoBehaviour
             yield return null;
         }
     }
-    
+
     private IEnumerator AdjustHeight() {
        while (ColliderHeightBelowThreshold()) { 
            col.height += adjustmentSpeed * Time.fixedDeltaTime;
@@ -80,8 +85,7 @@ public class ColliderFollow : MonoBehaviour
         isClimbing = active;
 
         if (!active && ColliderHeightBelowThreshold()) {
-            StartCoroutine(AdjustCollider());
-            StartCoroutine(AdjustHeight());
+            AdjustCollider();
         }
     }
 }

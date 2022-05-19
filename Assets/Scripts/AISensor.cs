@@ -33,19 +33,20 @@ public class AISensor : MonoBehaviour
     }
 
     private void Scan() {
+        print(objects.Count);
         count = Physics.OverlapSphereNonAlloc(transform.position, distance, colliders, layers,
             QueryTriggerInteraction.Collide);
         objects.Clear();
         for (int i = 0; i < count; ++i) {
             var obj = colliders[i].gameObject;
-            if (IsInSight(obj.transform.position))
+            if (IsInFOV(obj))
                 objects.Add(obj);
         }
     }
 
-    public bool IsInSight(Vector3 pos) {
+    private bool IsInFOV(GameObject obj) {
         var origin = transform.position;
-        var dest = pos;
+        var dest = obj.transform.position;
         var dir = dest - origin;
 
         if (dir.y < 0 || dir.y > height) return false;
@@ -55,8 +56,11 @@ public class AISensor : MonoBehaviour
         if (deltaAngle > angle) return false;
 
         origin.y += eyes.position.y - feet.position.y;
+        Debug.DrawLine(origin, dest, Color.green);
         return !Physics.Linecast(origin, dest, occlusionLayers);
     }
+
+    public bool IsInSight(GameObject obj) => objects.Contains(obj);
 
     private Mesh CreateWedgeMesh() {
         Mesh mesh = new Mesh();

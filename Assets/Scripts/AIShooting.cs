@@ -35,7 +35,7 @@ public class AIShooting : MonoBehaviour
     private IEnumerator Fire() {
         lastShotTime = Time.time;
         while (isFiring) {
-            agent.EnemyTarget.FollowTarget(true);
+            agent.Target.FollowTarget(true);
             
             agent.Animator.SetBool(IsShooting, false);
             agent.LineRenderer.startColor = aimColor;
@@ -51,7 +51,7 @@ public class AIShooting : MonoBehaviour
             agent.LineRenderer.startColor = shootColor;
             agent.LineRenderer.endColor = shootColor;
 
-            agent.EnemyTarget.FollowTarget(false);
+            agent.Target.FollowTarget(false);
 
             yield return new WaitForSeconds(aimLockTime);
             

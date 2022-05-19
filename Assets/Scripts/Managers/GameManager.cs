@@ -5,6 +5,8 @@ public class GameManager : MonoBehaviour
     [SerializeField] private Transform spawnPoint;
     [SerializeField] private GameObject playerPrefab;
     
+    public GameStates GameState { get; private set; }
+    
     private static GameManager _instance;
     public static GameManager Instance {
         get {
@@ -22,6 +24,17 @@ public class GameManager : MonoBehaviour
     }
     
     private void Start() {
-        DontDestroyOnLoad(transform.parent);
+        DontDestroyOnLoad(transform);
+        GameState = GameStates.Pause;
+    }
+
+    public void ChangeState(int i) {
+        GameState = i == 0 ? GameStates.Pause : GameStates.Play;
+    }
+
+    public enum GameStates
+    {
+        Play,
+        Pause
     }
 }

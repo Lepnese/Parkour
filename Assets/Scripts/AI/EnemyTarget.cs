@@ -4,6 +4,7 @@ public class EnemyTarget : MonoBehaviour
 {
     [SerializeField] private Transform target;
 
+    public Transform TargetTransform => target;
     public Health Health { get; private set; }
 
     private bool followTarget;

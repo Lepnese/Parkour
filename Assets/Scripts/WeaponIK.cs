@@ -63,7 +63,7 @@ public class WeaponIK : MonoBehaviour
 
     public void UpdateAimDireection() {
         if (aimTransform == null) return;
-        if (!agent.Sensor.IsInSight(agent.TargetPosition)) return;
+        if (!agent.Sensor.IsInSight(agent.PlayerTransform.gameObject)) return;
         
         Vector3 targetPosition = GetTargetPosition();
         for (int i = 0; i < iterations; i++) {
