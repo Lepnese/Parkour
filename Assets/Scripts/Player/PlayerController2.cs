@@ -109,14 +109,25 @@ public class PlayerController2 : MonoBehaviour
     }
 
     public void OnPlayerFall() {
-        var spawnPoint = lastCollider.bounds.center;
-        spawnPoint.y += lastCollider.bounds.extents.y + 0.2f;
+        var playerPos = transform.position;
+        
+        var closestPoint = lastCollider.ClosestPoint(playerPos);
+        var dir = (closestPoint - playerPos).normalized;
+
+        closestPoint.x += dir.x;
+        closestPoint.y = lastCollider.bounds.max.y + 0.2f;
+        closestPoint.z += dir.z;
+        
+        // var spawnPoint = closestPoint;
+        // spawnPoint.y += lastCollider.bounds.extents.y + 0.2f;
 
         rb.velocity = Vector3.zero;
-        transform.position = spawnPoint;
+        transform.position = closestPoint;
     }
 
     private void OnCollisionStay(Collision collision) {
+        // var col = collision.collider;
+
         if (Mathf.Abs(rb.velocity.y) < 0.01f)
             lastCollider = collision.collider;
     }
