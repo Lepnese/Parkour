@@ -2,9 +2,6 @@
 
 public class GameManager : MonoBehaviour
 {
-    [SerializeField] private Transform spawnPoint;
-    [SerializeField] private GameObject playerPrefab;
-    
     public GameStates GameState { get; private set; }
     
     private static GameManager _instance;

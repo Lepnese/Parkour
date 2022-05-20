@@ -15,7 +15,6 @@ public class InteractableArea : MonoBehaviour
     
     private void OnTriggerExit(Collider other) {
         if (other.CompareTag(Tags.Player)) {
-            print(false);
             toggleHandInteraction.Raise(false);
             exitTime = Time.time;
         }

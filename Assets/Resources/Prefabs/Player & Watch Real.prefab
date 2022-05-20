@@ -340,6 +340,7 @@ MonoBehaviour:
   gripPressedReference: {fileID: -6131295136447488360, guid: c348712bda248c246b8c49b3db54643f, type: 3}
   triggerPressedReference: {fileID: -5982496924579745919, guid: c348712bda248c246b8c49b3db54643f, type: 3}
   jumpBtnPressedReference: {fileID: 7393297889388296884, guid: c348712bda248c246b8c49b3db54643f, type: 3}
+  triggerExit: {fileID: 0}
 --- !u!1 &532186310504817579
 GameObject:
   m_ObjectHideFlags: 0
@@ -758,6 +759,7 @@ MonoBehaviour:
   gripPressedReference: {fileID: 187161793506945269, guid: c348712bda248c246b8c49b3db54643f, type: 3}
   triggerPressedReference: {fileID: 83097790271614945, guid: c348712bda248c246b8c49b3db54643f, type: 3}
   jumpBtnPressedReference: {fileID: 7393297889388296884, guid: c348712bda248c246b8c49b3db54643f, type: 3}
+  triggerExit: {fileID: 0}
 --- !u!82 &4624562172240326796
 AudioSource:
   m_ObjectHideFlags: 0
@@ -3702,6 +3704,7 @@ MonoBehaviour:
   gripPressedReference: {fileID: -6131295136447488360, guid: c348712bda248c246b8c49b3db54643f, type: 3}
   triggerPressedReference: {fileID: -5982496924579745919, guid: c348712bda248c246b8c49b3db54643f, type: 3}
   jumpBtnPressedReference: {fileID: 7393297889388296884, guid: c348712bda248c246b8c49b3db54643f, type: 3}
+  triggerExit: {fileID: 0}
 --- !u!1 &4583704364487011608
 GameObject:
   m_ObjectHideFlags: 0
@@ -4274,6 +4277,7 @@ MonoBehaviour:
   - {fileID: 8300000, guid: b212165666b40b8409cfe156f5f457b6, type: 3}
   - {fileID: 8300000, guid: 7e840aca65bf6f149afc59732962c249, type: 3}
   - {fileID: 8300000, guid: 144d7d1d5798d51459cc27cb1d08aa7e, type: 3}
+  landingClip: {fileID: 0}
   stepDistance: 0
 --- !u!82 &7381220397651442254
 AudioSource:
@@ -5487,6 +5491,7 @@ MonoBehaviour:
   gripPressedReference: {fileID: 187161793506945269, guid: c348712bda248c246b8c49b3db54643f, type: 3}
   triggerPressedReference: {fileID: 83097790271614945, guid: c348712bda248c246b8c49b3db54643f, type: 3}
   jumpBtnPressedReference: {fileID: 7393297889388296884, guid: c348712bda248c246b8c49b3db54643f, type: 3}
+  triggerExit: {fileID: 0}
 --- !u!1 &4583704366491563870
 GameObject:
   m_ObjectHideFlags: 0
@@ -5594,7 +5599,6 @@ MonoBehaviour:
   playerLayers:
     serializedVersion: 2
     m_Bits: 2560
-  Point: {fileID: 0}
   side: 0
   grappleSpawnPoint: {fileID: 4583704364884962066}
   ledgeGrabTimeDelay: 0.5
@@ -5912,7 +5916,6 @@ MonoBehaviour:
   playerLayers:
     serializedVersion: 2
     m_Bits: 2560
-  Point: {fileID: 0}
   side: 1
   grappleSpawnPoint: {fileID: 4583704364855937652}
   ledgeGrabTimeDelay: 0.5

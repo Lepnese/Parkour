@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 
@@ -7,11 +5,10 @@ public class BasketManager : MonoBehaviour
 {
 
     public TMP_Text scoreText;
-    int score = 0;
+    private int score;
 
-    void Start()
-    {
-        scoreText.text = "Votre score : " + scoreText.ToString();
+    void Start() {
+        scoreText.text = "Lancer un ballon!";
     }
 
     public void OnScored()

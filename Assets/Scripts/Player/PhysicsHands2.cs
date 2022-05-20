@@ -7,7 +7,6 @@ using UnityEngine.XR.Interaction.Toolkit;
 public class PhysicsHands2 : MonoBehaviour
 {
     [SerializeField] private LayerMask playerLayers;
-    [SerializeField] private Transform Point;
     [SerializeField] private ControllerSide side;
     [Header("Grappling")]
     [SerializeField] private Transform grappleSpawnPoint;
@@ -37,7 +36,6 @@ public class PhysicsHands2 : MonoBehaviour
     [SerializeField] private GameObject handModel;
     [SerializeField] private GameObject gun;
 
-    private Camera cam;
     private Rigidbody rb;
     private Transform targetTransform;
     private Vector3 previousPosition;
@@ -46,8 +44,12 @@ public class PhysicsHands2 : MonoBehaviour
     private Vector3 grabPoint;
     private List<Collider> closeColliders;
     private HandPresence handPresence;
-    public bool CanClimb { get; private set; }
     
+    private XRDirectInteractor directInteractor;
+    private GameObject grabbedObject;
+    private bool canActivateHands;
+    
+    public bool CanClimb { get; private set; }
     public Transform GrappleSpawnPoint => grappleSpawnPoint;
     public Hand TrackedHand { get; private set; }
 
@@ -61,7 +63,6 @@ public class PhysicsHands2 : MonoBehaviour
     }
 
     private void Start() {
-        cam = Camera.main;
         SetTrackedHand();
         
         rb.maxAngularVelocity = float.PositiveInfinity;
@@ -74,6 +75,7 @@ public class PhysicsHands2 : MonoBehaviour
         TrackedHand = HandInteractionManager.Instance.GetTrackedHand(side);
         
         targetTransform = TrackedHand.transform;
+        directInteractor = targetTransform.GetComponent<XRDirectInteractor>();
         
         transform.position = targetTransform.position;
         transform.rotation = targetTransform.rotation;
@@ -333,21 +335,31 @@ public class PhysicsHands2 : MonoBehaviour
     private bool IsState(PhysHandState checkState) => checkState == State;
 
     #region Toggle Hand Model On/Off
-    public void OnSelectEntered(float time) {
-        ToggleHandModel(false, time);
+    public void OnSelectEntered() { 
+        handModel.SetActive(false);
+        canActivateHands = false;
+        grabbedObject = directInteractor.firstInteractableSelected.transform.gameObject;
+        grabbedObject.layer = LayerMask.NameToLayer("Grabbing");
     }
 
-    public void OnSelectExited(float time) {
-        ToggleHandModel(true, time);
+    public void OnSelectExited() {
+        StartCoroutine(ActivateHandModel());
     }
     
-    public void ToggleHandModel(bool active, float time) {
-        if (time == 0) {
-            handModel.SetActive(active);
-            return;
+    private IEnumerator ActivateHandModel() {
+        while (!canActivateHands) {
+            var colliders = Physics.OverlapSphere(transform.position, grabRange.radius);
+            canActivateHands = colliders.All(c => c.gameObject != grabbedObject);
+
+            yield return null;
         }
         
-        StartCoroutine(ToggleHandModelRoutine(active, time));
+        handModel.SetActive(true);
+        grabbedObject.layer = LayerMask.NameToLayer("Default");
+    }
+    
+    public void ToggleHandModel(bool active) {
+        handModel.SetActive(active);
     }
 
     private IEnumerator ToggleHandModelRoutine(bool active, float time) {
