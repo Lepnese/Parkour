@@ -1,43 +1,22 @@
-using System.Collections;
-using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
 public class Timer : MonoBehaviour
 {
     [SerializeField] private TMP_Text text;
-    
-    private float startTime;
-    private bool timerActive;
+    private float totalTime;
 
-    public void HandleTimer(int i) {
-        switch (i) {
-            case 0:
-                timerActive = false;
-                break;
-            case 1:
-                if (!timerActive)
-                    StartCoroutine(StartTimer());
-                break;
-            default:
-                Debug.LogError("Received int other than 0 or 1");
-                break;
+    private void Update() {
+        if (GameManager.Instance.GameState == GameManager.GameStates.Play) {
+            UpdateTimer();
         }
     }
 
-    private IEnumerator StartTimer() {
-        startTime = Time.time;
-        timerActive = true;
-
-        while (timerActive) {
-            float t = Time.time - startTime;
-            int minutes = Mathf.FloorToInt(t / 60F);
-            int seconds = Mathf.FloorToInt(t - minutes * 60);
-            // int ms = Mathf.FloorToInt(t * 100) % 100;
+    private void UpdateTimer() {
+        totalTime += Time.deltaTime;
+        var minutes = Mathf.FloorToInt(totalTime / 60F);
+        var seconds = Mathf.FloorToInt(totalTime - minutes * 60);
             
-            text.text = $"{minutes:0}:{seconds:00}";
-
-            yield return null;
-        }
+        text.text = $"{minutes:0}:{seconds:00}";
     }
 }

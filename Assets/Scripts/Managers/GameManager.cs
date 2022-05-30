@@ -2,6 +2,7 @@
 
 public class GameManager : MonoBehaviour
 {
+    [SerializeField] private GameStates initialState;
     public GameStates GameState { get; private set; }
     
     private static GameManager _instance;
@@ -22,11 +23,15 @@ public class GameManager : MonoBehaviour
     
     private void Start() {
         DontDestroyOnLoad(transform);
-        GameState = GameStates.Pause;
+        GameState = initialState;
     }
 
-    public void ChangeState(int i) {
-        GameState = i == 0 ? GameStates.Pause : GameStates.Play;
+    public void GameStart(int i) {
+        ChangeState(i == 0 ? GameStates.Pause : GameStates.Play);
+    }
+
+    public void ChangeState(GameStates state) {
+        GameState = state;
     }
 
     public enum GameStates

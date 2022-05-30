@@ -8,8 +8,16 @@ public class LevelLoader : MonoBehaviour
     [SerializeField] private GameObject loadingScreen;
     [SerializeField] private Slider slider;
     [SerializeField] private Text progressText;
+    
     public void LoadLevel(int sceneIndex)
     {
+        GameManager.GameStates newState = sceneIndex switch {
+            2 => GameManager.GameStates.Play,
+            _ => GameManager.GameStates.Pause
+        };
+
+        GameManager.Instance.ChangeState(newState);
+        
         StartCoroutine(LoadAsynchronously(sceneIndex));
     }
     

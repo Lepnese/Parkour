@@ -63,13 +63,18 @@ public class AIShooting : MonoBehaviour
     }
 
     private void Shoot() {
-        // audioSource.Play();
+        audioSource.Play();
         agent.Animator.SetBool(IsShooting, true);
         
         if (Physics.Raycast(aimTransform.position, aimTransform.forward, out var hit)) {
             var health = hit.collider.GetComponent<Health>();
+            var hitBox = hit.collider.GetComponent<HandHitbox>();
+            
             if (health) {
                 health.TakeDamage(agent.config.shootingDamage);
+            }
+            else if (hitBox) {
+                hitBox.TakeDamage(agent.config.shootingDamage);
             }
         }
     }
@@ -78,7 +83,7 @@ public class AIShooting : MonoBehaviour
         if (active) {
             agent.LineRenderer.positionCount = 2;
             agent.LineRenderer.SetPosition(0, aimTransform.position);
-            agent.LineRenderer.SetPosition(1, aimTransform.position + aimTransform.forward * 20f);
+            agent.LineRenderer.SetPosition(1, aimTransform.position + aimTransform.forward * 50f);
         }
         else {
             agent.LineRenderer.positionCount = 0;

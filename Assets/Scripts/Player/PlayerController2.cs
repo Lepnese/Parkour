@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using System.Linq;
 using UnityEngine.XR.Interaction.Toolkit;
@@ -17,7 +18,9 @@ public class PlayerController2 : MonoBehaviour
     
     [Header("Jump")]
     [SerializeField] private float maxHandSpeed;
-    [SerializeField] private float jumpVelocity = 5f;
+    [SerializeField] private float jumpVelocity = 6f;
+    [SerializeField] private float jumpVelocity2 = 4f;
+    [SerializeField] private float jumpVelocity3 = 2f;
     
     [Header("Drag")] 
     [SerializeField] private float groundDrag = 6f;
@@ -36,6 +39,7 @@ public class PlayerController2 : MonoBehaviour
     private Transform cameraTransform;
     private Rigidbody rb;
     private Collider lastCollider;
+    private Vector3 lastPos;
 
     public bool IsGrounded { get; private set; }
     public Rigidbody Rigidbody => rb;
@@ -49,7 +53,7 @@ public class PlayerController2 : MonoBehaviour
     }
 
     private void Start() {
-        handVelocityArray = new float[30];
+        handVelocityArray = new float[15];
         cameraTransform = centerEyeCamera.transform;
     }
 
@@ -60,7 +64,7 @@ public class PlayerController2 : MonoBehaviour
         //     cameraTransform.position,
         //     Vector3.down, col.height + 0.05f, ~playerLayers);
 
-        IsGrounded = Mathf.Abs(rb.velocity.y) < 0.01f;
+        IsGrounded = Mathf.Abs(rb.velocity.y) < 0.1f;
         
         forwardDirection = cameraTransform.TransformDirection(Vector3.forward).normalized;
 
@@ -96,7 +100,7 @@ public class PlayerController2 : MonoBehaviour
     private void Jump() {
         var handSpeed = (leftHand.Velocity.magnitude + rightHand.Velocity.magnitude) / 2f;
         var controlledSpeed = Mathf.Clamp(handSpeed, 0f, maxHandSpeed);
-        var vel = rb.velocity.magnitude > 2f ? 6f : 4.5f;
+        var vel = rb.velocity.magnitude > jumpVelocity3 ? jumpVelocity : jumpVelocity2;
         
         rb.AddForce(vel * controlledSpeed * Vector3.up, ForceMode.Impulse);
     }
@@ -111,24 +115,25 @@ public class PlayerController2 : MonoBehaviour
     public void OnPlayerFall() {
         var playerPos = transform.position;
         
-        var closestPoint = lastCollider.ClosestPoint(playerPos);
-        var dir = (closestPoint - playerPos).normalized;
+        // var closestPoint = lastCollider.ClosestPoint(playerPos);
+        var dir = (lastPos - playerPos).normalized;
 
-        closestPoint.x += dir.x;
-        closestPoint.y = lastCollider.bounds.max.y + 0.2f;
-        closestPoint.z += dir.z;
+        lastPos.x += dir.x;
+        lastPos.y += 0.2f;
+        lastPos.z += dir.z;
         
         // var spawnPoint = closestPoint;
         // spawnPoint.y += lastCollider.bounds.extents.y + 0.2f;
 
         rb.velocity = Vector3.zero;
-        transform.position = closestPoint;
+        transform.position = lastPos;
     }
 
     private void OnCollisionStay(Collision collision) {
         // var col = collision.collider;
 
-        if (Mathf.Abs(rb.velocity.y) < 0.01f)
-            lastCollider = collision.collider;
+        if (IsGrounded)
+            lastPos = transform.position;
+        // lastCollider = collision.collider;
     }
 }

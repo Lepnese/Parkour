@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -6,6 +7,7 @@ using UnityEngine.XR.Interaction.Toolkit;
 
 public class PhysicsHands2 : MonoBehaviour
 {
+    [SerializeField] private LayerMask defaultLayer;
     [SerializeField] private LayerMask playerLayers;
     [SerializeField] private ControllerSide side;
     [Header("Grappling")]
@@ -110,16 +112,16 @@ public class PhysicsHands2 : MonoBehaviour
 
     private void FixHandPosition() {
         Quaternion rot;
-        
-        if (IsGrabbingCorner(grabPoint)) {
-            grabPoint = GetClosestPointOnEdge(grabPoint);
-            rot = Quaternion.Euler(ledgeGrabRotation);
-            handPresence.OnEdge(true);
-        } 
-        else {
+        //
+        // if (IsGrabbingCorner(grabPoint)) {
+        //     grabPoint = GetClosestPointOnEdge(grabPoint);
+        //     rot = Quaternion.Euler(ledgeGrabRotation);
+        //     handPresence.OnEdge(true);
+        // } 
+        // else {
             rot = Quaternion.Euler(0, transform.eulerAngles.y, -90);
             handPresence.OnFlatSurface(true);
-        }
+        // }
         
         transform.position = grabPoint;
         transform.rotation = rot;
@@ -244,38 +246,56 @@ public class PhysicsHands2 : MonoBehaviour
         var time = Time.time;
 
         while (Time.time - time < ledgeGrabTimeDelay && TrackedHand.GetHandButton(1)) {
-            while (!currentLedge) yield return null;
+            // while (!currentLedge) yield return null;
 
             // le joueur ne doit pas grimper sur un objet qu'il peut attraper
-            if (currentLedge.GetComponent<XRGrabInteractable>() != null)
-                yield break;
+            
 
-            grabPoint = GetClosestPoint();
+            // grabPoint = GetClosestPoint();
 
-            if (Vector3.Distance(grabPoint, transform.position) > grabRange.radius) yield break;
-            if (!currentLedge.CompareTag(Tags.Climbable) && !IsValidGrabPoint(grabPoint, currentLedge)) yield break;
 
-            if (IsValidGrabPoint(grabPoint, currentLedge))
-                FixHandPosition();
+            var pos = transform.position + transform.forward * 0.5f;
+
+            if (Physics.Raycast(transform.position, Vector3.down, out var hit, 0.5f, defaultLayer)) {
+                
+                if (hit.collider.GetComponent<XRGrabInteractable>() != null)
+                    yield break;
+                
+                if (hit.collider.CompareTag("NotClimbable"))
+                    yield break;
+                
+                if (hit.collider.gameObject.layer == LayerMask.NameToLayer("Default")) {
+                    grabPoint = hit.point;
+                    FixHandPosition();
+                    yield break;
+                }
+            }
+            
+            if (Physics.Raycast(pos, Vector3.down, out var hit2, 0.8f, defaultLayer)) {
+                
+                if (hit.collider.GetComponent<XRGrabInteractable>() != null)
+                    yield break;
+                
+                if (hit.collider.CompareTag("NotClimbable"))
+                    yield break;
+                
+                if (hit2.collider.gameObject.layer == LayerMask.NameToLayer("Default")) {
+                    grabPoint = hit2.point;
+                    FixHandPosition();
+                    yield break;
+                }
+            }
+            
+            // if (Vector3.Distance(grabPoint, transform.position) > grabRange.radius) yield break;
+            // if (!currentLedge.CompareTag(Tags.Climbable) && !IsValidGrabPoint(grabPoint, currentLedge)) yield break;
+            //
+            // if (TrackedHand.GetHandButton(1) && IsValidGrabPoint(grabPoint, currentLedge))
+            //     FixHandPosition();
                 
             yield return null;
         }
     }
 
-    private Vector3 GetClosestPoint() {
-        var meshCollider = currentLedge.GetComponent<MeshCollider>();
-        
-        if (!meshCollider || meshCollider.convex) {
-            return currentLedge.ClosestPoint(transform.position);
-        }
-
-        meshCollider.convex = true;
-        var point = currentLedge.ClosestPoint(transform.position);
-        meshCollider.convex = false;
-
-        return point;
-    }
-    
     private bool IsValidGrabPoint(Vector3 point, Collider ledge) {
         var dir = (point - transform.position).normalized;
         if (Physics.Raycast(transform.position, dir, out RaycastHit hit, 5f, ~playerLayers)) {
@@ -290,7 +310,8 @@ public class PhysicsHands2 : MonoBehaviour
         onGripBtnDown.Raise(this);
 
         if (!IsState(PhysHandState.Hand)) return;
-        StartCoroutine(CheckForLedge());
+        if (directInteractor.interactablesHovered.Count == 0)
+            StartCoroutine(CheckForLedge());
     }
     
     public void OnGripBtnUp(Hand hand) {

@@ -19,7 +19,7 @@ public class AISensor : MonoBehaviour
         var dest = pos;
         var dir = dest - origin;
 
-        if (dir.y < 0 || dir.y > height) return false;
+        if (dir.y < -height || dir.y > height) return false;
         if (dir.sqrMagnitude > distance * distance) return false;
 
         dir.y = 0;

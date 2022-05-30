@@ -55,7 +55,7 @@ public class ColliderFollow : MonoBehaviour
     private IEnumerator AdjustCenter() {
         float y = col.center.y;
         while (col.center.y > cameraCenter.y / 2f) {
-            y -= adjustmentSpeed / 2f * Time.fixedDeltaTime;
+            y -= adjustmentSpeed / 1.2f * Time.fixedDeltaTime;
             col.center = new Vector3(col.center.x, y, col.center.z);
             
             yield return null;

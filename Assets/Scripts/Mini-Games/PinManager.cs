@@ -20,10 +20,10 @@ public class PinManager : MonoBehaviour
     }
 
     private void UpdateText() {
-        if (knockedPins == 10)
-            scoreText.text = "Bien joué!";
-        else
-            scoreText.text = $"Votre score : {knockedPins}";
+        // if (knockedPins == 10)
+        //     scoreText.text = "Bien joué!";
+        // else
+        //     scoreText.text = $"Votre score : {knockedPins}";
     }
 
     public void ResetPins() {

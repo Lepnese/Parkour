@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 33000012828584534}
   - component: {fileID: 23000014168261348}
   - component: {fileID: 7126989408620804190}
+  - component: {fileID: 8621426610370052741}
   m_Layer: 0
   m_Name: Numerical Watch
   m_TagString: Untagged
@@ -98,6 +99,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c499c4f497a34e459c29135d58dd0834, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &8621426610370052741
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1000010238534840}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 83e49cb8a0a7c3f42a7c210c4c3f6916, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  text: {fileID: 5001551460083670892}
 --- !u!1 &1767484701499127036
 GameObject:
   m_ObjectHideFlags: 0
@@ -163,7 +177,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 01:00
+  m_text: 00:00
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 09eb18dc12c88e446814669b632c6692, type: 2}
   m_sharedMaterial: {fileID: 5759025371996518072, guid: 09eb18dc12c88e446814669b632c6692, type: 2}
@@ -316,7 +330,7 @@ MonoBehaviour:
   m_FallbackScreenDPI: 96
   m_DefaultSpriteDPI: 96
   m_DynamicPixelsPerUnit: 1
-  m_PresetInfoIsWorld: 0
+  m_PresetInfoIsWorld: 1
 --- !u!114 &1672905838481268509
 MonoBehaviour:
   m_ObjectHideFlags: 0

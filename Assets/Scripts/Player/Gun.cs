@@ -9,7 +9,10 @@ public class Gun : MonoBehaviour
     [SerializeField] private ParticleSystem muzzleFlash;
     [SerializeField] private GameObject impactEffect;
     [SerializeField] private GunInteraction gunInteraction;
+    [SerializeField] private AudioClip shootClip;
+    [SerializeField] private AudioClip reloadClip;
 
+    private bool hasReloaded;
     private bool rayFromBullet;
     private RaycastHit rayHit;
     private AudioSource audioSource;
@@ -20,13 +23,15 @@ public class Gun : MonoBehaviour
 
     public void OnTriggerBtnDown(Hand hand) {
         if (hand != gunInteraction.CurrentHand) return;
-        
-        if (gunInteraction.AmmoCount > 0)
+
+        if (gunInteraction.AmmoCount > 0) {
             Fire();
+            hasReloaded = false;
+        }
     }
 
     private void Fire() {
-        audioSource.Play();
+        PlayClip(shootClip);
         muzzleFlash.Play();
         gunInteraction.ReduceAmmo();
         
@@ -55,11 +60,20 @@ public class Gun : MonoBehaviour
     }
 
     private void CheckForReload() {
+        if (hasReloaded) return;
         if (!rayFromBullet) return;
         if(rayHit.normal != Vector3.up) return;
         
         float dot = Vector3.Dot(bulletSpawn.forward, rayHit.normal);
-        if (Mathf.Abs(dot) > 0.9f)
+        if (Mathf.Abs(dot) > 0.9f) {
             gunInteraction.Reload();
+            PlayClip(reloadClip);
+            hasReloaded = true;
+        }
+    }
+
+    private void PlayClip(AudioClip clip) {
+        audioSource.clip = clip;
+        audioSource.Play();
     }
 }
