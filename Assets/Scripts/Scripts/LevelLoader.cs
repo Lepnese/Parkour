@@ -11,7 +11,7 @@ public class LevelLoader : MonoBehaviour
     
     public void LoadLevel(int sceneIndex)
     {
-        GameManager.GameStates newState = sceneIndex switch {
+        var newState = sceneIndex switch {
             2 => GameManager.GameStates.Play,
             _ => GameManager.GameStates.Pause
         };
