@@ -21,6 +21,7 @@
     }
     
     public void Update() {
+        if (GameManager.Instance.GameState == GameManager.GameStates.Pause) return;
         GetState(currentState)?.Update(agent);
     }
 

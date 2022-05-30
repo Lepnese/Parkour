@@ -10,7 +10,8 @@ public class AiAgent : MonoBehaviour
     public SkinnedMeshRenderer mesh;
 
     public Rigidbody Weapon => weapon;
-    public EnemyTarget EnemyTarget { get; private set; }
+    public EnemyTarget Target { get; private set; }
+    public Transform PlayerTransform { get; private set; }
     public AiAnimation Animation { get; private set; }
     public Ragdoll Ragdoll { get; private set; }
     public AiStateMachine StateMachine { get; private set; }
@@ -39,9 +40,10 @@ public class AiAgent : MonoBehaviour
         StateMachine.RegisterState(new AiPauseState());
         StateMachine.ChangeState(initialState);
         
-        EnemyTarget = target.GetComponent<EnemyTarget>();
-        TargetHealth = EnemyTarget.Health;
-        EnemyTarget.FollowTarget(true);
+        Target = target.GetComponent<EnemyTarget>();
+        PlayerTransform = Target.TargetTransform;
+        TargetHealth = Target.Health;
+        Target.FollowTarget(true);
     }
 
     private void Update() {

@@ -9,7 +9,7 @@
     }
 
     public void Update(AiAgent agent) {
-        if (agent.Sensor.IsInSight(agent.TargetPosition)) {
+        if (agent.Sensor.IsInSight(agent.PlayerTransform.position)) {
             agent.StateMachine.ChangeState(AiStateId.Shoot);
         }
     }

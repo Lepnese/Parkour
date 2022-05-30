@@ -233,7 +233,7 @@ MonoBehaviour:
       - m_Target: {fileID: 4583704366515730303}
         m_TargetAssemblyTypeName: PhysicsHands2, Assembly-CSharp
         m_MethodName: OnSelectEntered
-        m_Mode: 4
+        m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -248,7 +248,7 @@ MonoBehaviour:
       - m_Target: {fileID: 4583704366515730303}
         m_TargetAssemblyTypeName: PhysicsHands2, Assembly-CSharp
         m_MethodName: OnSelectExited
-        m_Mode: 4
+        m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -651,7 +651,7 @@ MonoBehaviour:
       - m_Target: {fileID: 4583704366589251446}
         m_TargetAssemblyTypeName: PhysicsHands2, Assembly-CSharp
         m_MethodName: OnSelectEntered
-        m_Mode: 4
+        m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -666,7 +666,7 @@ MonoBehaviour:
       - m_Target: {fileID: 4583704366589251446}
         m_TargetAssemblyTypeName: PhysicsHands2, Assembly-CSharp
         m_MethodName: OnSelectExited
-        m_Mode: 4
+        m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -872,6 +872,8 @@ MonoBehaviour:
   muzzleFlash: {fileID: 7928994161923097155}
   impactEffect: {fileID: 100002, guid: 957385c45b877e645a128e11a3efb2f9, type: 3}
   gunInteraction: {fileID: 7928994161065166944}
+  shootClip: {fileID: 8300000, guid: e12e5b745428fcf449c5eb5af38c7fb0, type: 3}
+  reloadClip: {fileID: 8300000, guid: 39b4c13e93986904dbba46f8ef662e3c, type: 3}
 --- !u!114 &7928994160936884560
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1014,6 +1016,8 @@ MonoBehaviour:
   muzzleFlash: {fileID: 7928994161278113589}
   impactEffect: {fileID: 100002, guid: 957385c45b877e645a128e11a3efb2f9, type: 3}
   gunInteraction: {fileID: 7928994161065166944}
+  shootClip: {fileID: 8300000, guid: e12e5b745428fcf449c5eb5af38c7fb0, type: 3}
+  reloadClip: {fileID: 8300000, guid: 39b4c13e93986904dbba46f8ef662e3c, type: 3}
 --- !u!114 &7928994161812061737
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3457,7 +3461,7 @@ MonoBehaviour:
   m_SphereCastRadius: 0.1
   m_RaycastMask:
     serializedVersion: 2
-    m_Bits: 4294967295
+    m_Bits: 32
   m_RaycastTriggerInteraction: 1
   m_HitClosestOnly: 0
   m_HoverToSelect: 0
@@ -3910,6 +3914,8 @@ GameObject:
   - component: {fileID: 7928994161065166947}
   - component: {fileID: 7928994161065166946}
   - component: {fileID: 884255128060107547}
+  - component: {fileID: 7945025540530356716}
+  - component: {fileID: 7381220397651442254}
   m_Layer: 11
   m_Name: XR Origin
   m_TagString: Player
@@ -3924,15 +3930,15 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4583704364819837082}
-  m_LocalRotation: {x: -0, y: 0.3826831, z: -0, w: 0.9238797}
-  m_LocalPosition: {x: 40.4, y: 15.2, z: 65.200005}
+  m_LocalRotation: {x: 0, y: 1, z: 0, w: 0}
+  m_LocalPosition: {x: -54.43, y: 14.27, z: -23.34}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4583704364580264023}
   - {fileID: 4583704365063644916}
   m_Father: {fileID: 4583704366491563871}
   m_RootOrder: 1
-  m_LocalEulerAnglesHint: {x: 0, y: 45, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 180, z: 0}
 --- !u!114 &4583704364819837081
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3992,7 +3998,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: df6818d3414661542894e0047aacfba0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  onAreaEnter: {fileID: 11400000, guid: d21f855d3dfe40f18bd39716e40027dc, type: 2}
   leftHandObj: {fileID: 4583704364479740195}
   rightHandObj: {fileID: 4583704366132933523}
   centerEyeCamera: {fileID: 4583704364983537659}
@@ -4004,6 +4009,8 @@ MonoBehaviour:
   maxSpeed: 3
   maxHandSpeed: 2.5
   jumpVelocity: 4
+  jumpVelocity2: 4
+  jumpVelocity3: 2
   groundDrag: 3
   airDrag: 0
 --- !u!114 &4583704364819837089
@@ -4257,6 +4264,125 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   maxHealth: 100
+  redSplatter: {fileID: 0}
+  whiteRadial: {fileID: 0}
+  hurtTimer: 0.1
+  hurtClip: {fileID: 8300000, guid: a05d082cd207b4b12a47c089be8b7a62, type: 3}
+  playerDiedEvent: {fileID: 11400000, guid: 80a6660b50c023246be3c893c29f560d, type: 2}
+--- !u!114 &7945025540530356716
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4583704364819837082}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7c94bd657c168534587462aa33608170, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  footstepClips:
+  - {fileID: 8300000, guid: b212165666b40b8409cfe156f5f457b6, type: 3}
+  - {fileID: 8300000, guid: 7e840aca65bf6f149afc59732962c249, type: 3}
+  - {fileID: 8300000, guid: 144d7d1d5798d51459cc27cb1d08aa7e, type: 3}
+  landingClip: {fileID: 8300000, guid: c60f334367615544c9c6675851e80109, type: 3}
+  stepDistance: 0
+--- !u!82 &7381220397651442254
+AudioSource:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4583704364819837082}
+  m_Enabled: 1
+  serializedVersion: 4
+  OutputAudioMixerGroup: {fileID: 0}
+  m_audioClip: {fileID: 0}
+  m_PlayOnAwake: 0
+  m_Volume: 1
+  m_Pitch: 1
+  Loop: 0
+  Mute: 0
+  Spatialize: 0
+  SpatializePostEffects: 0
+  Priority: 128
+  DopplerLevel: 1
+  MinDistance: 1
+  MaxDistance: 500
+  Pan2D: 0
+  rolloffMode: 0
+  BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
+  rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  panLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  spreadCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  reverbZoneMixCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
 --- !u!1 &4583704364855937655
 GameObject:
   m_ObjectHideFlags: 0
@@ -4564,7 +4690,7 @@ Camera:
     width: 1
     height: 1
   near clip plane: 0.01
-  far clip plane: 1000
+  far clip plane: 300
   field of view: 60
   orthographic: 0
   orthographic size: 5
@@ -5044,7 +5170,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6803edce0201f574f923fd9d10e5b30a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_InteractionManager: {fileID: 0}
+  m_InteractionManager: {fileID: 4583704364487011609}
   m_InteractionLayerMask:
     serializedVersion: 2
     m_Bits: 4294967295
@@ -5128,7 +5254,7 @@ MonoBehaviour:
   m_SphereCastRadius: 0.1
   m_RaycastMask:
     serializedVersion: 2
-    m_Bits: 4294967295
+    m_Bits: 32
   m_RaycastTriggerInteraction: 1
   m_HitClosestOnly: 0
   m_HoverToSelect: 0
@@ -5423,6 +5549,8 @@ GameObject:
   - component: {fileID: 4583704366515734656}
   - component: {fileID: 4583704366515734659}
   - component: {fileID: 1099815378034126190}
+  - component: {fileID: 11547563}
+  - component: {fileID: 1515448301}
   m_Layer: 9
   m_Name: LeftHand
   m_TagString: Player
@@ -5477,10 +5605,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1be19e1416a9439896877756c82138a6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  defaultLayer:
+    serializedVersion: 2
+    m_Bits: 1
   playerLayers:
     serializedVersion: 2
     m_Bits: 2560
-  Point: {fileID: 0}
   side: 0
   grappleSpawnPoint: {fileID: 4583704364884962066}
   ledgeGrabTimeDelay: 0.5
@@ -5726,6 +5856,47 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+--- !u!114 &11547563
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4583704366515730299}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 57ef2f34999a46ec96ff9e576e3b1ed0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  gameEvent: {fileID: 11400000, guid: 76b5f31d5bb8fe745bdb0ee79251f739, type: 2}
+  unityEventResponse:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 4583704366515730303}
+        m_TargetAssemblyTypeName: PhysicsHands2, Assembly-CSharp
+        m_MethodName: TriggerExited
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+--- !u!114 &1515448301
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4583704366515730299}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3c38a2d820bd4b0db5302487349c42cb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  health: {fileID: 884255128060107547}
 --- !u!1 &4583704366589251442
 GameObject:
   m_ObjectHideFlags: 0
@@ -5743,6 +5914,8 @@ GameObject:
   - component: {fileID: 4583704366589251450}
   - component: {fileID: 4583704366589251445}
   - component: {fileID: 1099815378186934024}
+  - component: {fileID: 1550435758}
+  - component: {fileID: 331082933}
   m_Layer: 9
   m_Name: RightHand
   m_TagString: Player
@@ -5795,10 +5968,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1be19e1416a9439896877756c82138a6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  defaultLayer:
+    serializedVersion: 2
+    m_Bits: 1
   playerLayers:
     serializedVersion: 2
     m_Bits: 2560
-  Point: {fileID: 0}
   side: 1
   grappleSpawnPoint: {fileID: 4583704364855937652}
   ledgeGrabTimeDelay: 0.5
@@ -6044,6 +6219,47 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+--- !u!114 &1550435758
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4583704366589251442}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 57ef2f34999a46ec96ff9e576e3b1ed0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  gameEvent: {fileID: 11400000, guid: 8f414996d5c32ab46bed291f40ab48c0, type: 2}
+  unityEventResponse:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 4583704366589251446}
+        m_TargetAssemblyTypeName: PhysicsHands2, Assembly-CSharp
+        m_MethodName: TriggerExited
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+--- !u!114 &331082933
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4583704366589251442}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3c38a2d820bd4b0db5302487349c42cb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  health: {fileID: 884255128060107547}
 --- !u!1 &5944775640765956973
 GameObject:
   m_ObjectHideFlags: 0
@@ -8130,6 +8346,19 @@ Transform:
   m_Father: {fileID: 5949210566650469411}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 18.60066, y: -113.645996, z: -31.983948}
+--- !u!114 &10483333
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7929431222200545780}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 83e49cb8a0a7c3f42a7c210c4c3f6916, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  text: {fileID: 3125610995841632800}
 --- !u!1 &8026436219226666357
 GameObject:
   m_ObjectHideFlags: 0
@@ -8398,14 +8627,14 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 9021507208151806945, guid: f8eb6acefd2f8d6479d7177e152638c4, type: 3}
   m_PrefabInstance: {fileID: 7928994161812061729}
   m_PrefabAsset: {fileID: 0}
---- !u!4 &1761038848672388986 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 8536860816127027547, guid: f8eb6acefd2f8d6479d7177e152638c4, type: 3}
-  m_PrefabInstance: {fileID: 7928994161812061729}
-  m_PrefabAsset: {fileID: 0}
 --- !u!4 &4261200762117555697 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 6137176669113301968, guid: f8eb6acefd2f8d6479d7177e152638c4, type: 3}
+  m_PrefabInstance: {fileID: 7928994161812061729}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &1761038848672388986 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 8536860816127027547, guid: f8eb6acefd2f8d6479d7177e152638c4, type: 3}
   m_PrefabInstance: {fileID: 7928994161812061729}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &7928994161909079427
@@ -8577,7 +8806,8 @@ PrefabInstance:
       propertyPath: m_Enabled
       value: 1
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 8621426610370052741, guid: d068e4aa666d18f42837bf04a31d9e85, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: d068e4aa666d18f42837bf04a31d9e85, type: 3}
 --- !u!114 &7809127155845195158 stripped
 MonoBehaviour:
@@ -8590,8 +8820,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &3125610995841632800 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 5001551460083670892, guid: d068e4aa666d18f42837bf04a31d9e85, type: 3}
+  m_PrefabInstance: {fileID: 7928994161950037324}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!4 &7928384642545268674 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4000011301888654, guid: d068e4aa666d18f42837bf04a31d9e85, type: 3}
+  m_PrefabInstance: {fileID: 7928994161950037324}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &7929431222200545780 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1000010238534840, guid: d068e4aa666d18f42837bf04a31d9e85, type: 3}
   m_PrefabInstance: {fileID: 7928994161950037324}
   m_PrefabAsset: {fileID: 0}

@@ -34,7 +34,7 @@ public class GunInteraction : MonoBehaviour
 
     private void ToggleGunActive(bool active) {
         gun.SetActive(active);
-        currentHand.ToggleHandModel(!active, 0f);
+        currentHand.ToggleHandModel(!active);
         currentHand.SetState(active ? PhysHandState.Gun : PhysHandState.Hand);
     }
 

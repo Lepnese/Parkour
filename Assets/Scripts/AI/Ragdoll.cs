@@ -26,8 +26,10 @@ public class Ragdoll : MonoBehaviour
             rb.isKinematic = false;
 
             var interactable = rb.gameObject.GetComponent<XRGrabInteractable>();
-            if (!interactable)
-                rb.gameObject.AddComponent<XRGrabInteractable>();
+            if (!interactable) {
+                var grab = rb.gameObject.AddComponent<XRGrabInteractable>();
+                grab.throwVelocityScale = 3f;
+            }
         }
     }
 

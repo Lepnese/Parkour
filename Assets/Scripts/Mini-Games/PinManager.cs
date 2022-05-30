@@ -1,38 +1,43 @@
-using System.Collections;
-using System.Collections.Generic;
+using System;
 using UnityEngine;
-using UnityEngine.UI;
 using TMPro;
 
 public class PinManager : MonoBehaviour
 {
 
-    public TMP_Text scoreText;
-    int knockedPins = 0;
-    Pin pin;
+    [SerializeField] private TMP_Text scoreText;
+    
+    private Pin[] pins;
+    private int knockedPins;
 
-    // Use this for initialization
-    void Start()
-    {
+    private void Awake() {
+        pins = GetComponentsInChildren<Pin>();
+        print(pins.Length);
+    }
 
-        scoreText.text = "Votre score : " + scoreText.ToString();
-        pin = GetComponent<Pin>();
+    void Start() {
+        UpdateText();
+    }
+
+    private void UpdateText() {
+        // if (knockedPins == 10)
+        //     scoreText.text = "Bien joué!";
+        // else
+        //     scoreText.text = $"Votre score : {knockedPins}";
+    }
+
+    public void ResetPins() {
+        foreach (var pin in pins) {
+            pin.Reset();
+        }
+
+        knockedPins = 0;
+        UpdateText();
     }
  
     public void OnKnocked()
     {
         knockedPins++;
-
-            if (knockedPins == 10)
-            {
-                Debug.Log("Bien joué");
-
-                scoreText.text = "Bien joué";
-            }
-            //if (pin.time <= 2f)
-            //scoreText.text = "Strike!!!";
-            //faudrait checker les 10 pins pis prendre la valeur max pis la valeur min
-            else
-                scoreText.text = "Votre score : " + knockedPins;
+        UpdateText();
     }
 }
